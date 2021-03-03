@@ -44,8 +44,8 @@ class TokenData(BaseModel):
     permissions: str = "user"
 
 class Ride(BaseModel):
-    id: str
     description: str
+    ride_id: str = None
     difficulty_estimate: float
     duration: int
     fitness_discipline_display_name: str
@@ -54,6 +54,16 @@ class Ride(BaseModel):
     title: str
     original_air_time: int = None
     scheduled_start_time: int
+
+class RideIn(Ride):
+    pass
+
+
+class RideOut(Ride):
+    id: int
+
+    class Config:
+        orm_mode = True
 
 
 class CommentIn(BaseModel):
@@ -67,10 +77,10 @@ class CommentOut(CommentIn):
     class Config:
         orm_mode = True
 
+# class RideOut(Ride):
+#     id: int
+#     ride_id: str
+#     comments: t.List[CommentOut]
 
-class RideOut(Ride):
-    ride_id: str
-    comments: t.List[CommentOut]
-
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True

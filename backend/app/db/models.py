@@ -73,7 +73,7 @@ class Comment(Base):
     __tablename__ = "comment"
 
     id = Column(Integer, primary_key=True, index=True)
-    created_at = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime, default=func.now())
     comment = Column(String)
     ride_id = Column(Integer, ForeignKey('ride.id'))
     ride = relationship("Ride", back_populates="comments")
