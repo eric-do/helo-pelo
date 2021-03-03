@@ -26,8 +26,7 @@ def get_users(
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = get_password_hash(user.password)
     db_user = models.User(
-        first_name=user.first_name,
-        last_name=user.last_name,
+        username=user.username,
         email=user.email,
         is_active=user.is_active,
         is_superuser=user.is_superuser,
@@ -103,3 +102,23 @@ def add_rides_from_peloton(
     except Exception as e:
         print(e)
         db.rollback()
+
+def add_comment_to_ride(
+    db: Session,
+    comment: schemas.CommentIn,
+    current_user: schemas.User
+):
+    try:
+        comment_db = models.Comment(
+            comment = comment['comment'],
+            ride_id = comment['ride_id'],
+            user_id = current_user.id
+        )
+        db.add(comment_db)
+        db.commit()
+        db.refresh(comment_db)
+        return comment_db
+    except Exception as e:
+        print(e)
+        db.rollback()
+        raise HTTPException(status_code=404, detail="Could not add comment")

@@ -6,8 +6,7 @@ class UserBase(BaseModel):
     email: str
     is_active: bool = True
     is_superuser: bool = False
-    first_name: str = None
-    last_name: str = None
+    username: str = None
 
 
 class UserOut(UserBase):
@@ -50,11 +49,28 @@ class Ride(BaseModel):
     difficulty_estimate: float
     duration: int
     fitness_discipline_display_name: str
-    image_url: str
+    image_url: str = None
     instructor_id: str
     title: str
-    original_air_time: int
+    original_air_time: int = None
     scheduled_start_time: int
 
-class RideOut(BaseModel):
-    pass
+
+class CommentIn(BaseModel):
+    comment: str
+
+
+class CommentOut(CommentIn):
+    created_at: int
+    username: str
+
+    class Config:
+        orm_mode = True
+
+
+class RideOut(Ride):
+    ride_id: str
+    comments: t.List[CommentOut]
+
+    class Config:
+        orm_mode = True

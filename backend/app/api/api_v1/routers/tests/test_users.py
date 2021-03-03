@@ -34,8 +34,7 @@ def test_edit_user(client, test_superuser, superuser_token_headers):
         "email": "newemail@email.com",
         "is_active": False,
         "is_superuser": True,
-        "first_name": "Joe",
-        "last_name": "Smith",
+        "username": "joe_user",
         "password": "new_password",
     }
 

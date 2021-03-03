@@ -9,7 +9,7 @@ from sqlalchemy import (
     Table
 )
 from sqlalchemy.orm import relationship
-
+from sqlalchemy.sql import func
 from .session import Base
 
 ride_tag_association_table = Table('ride_tags', Base.metadata,
@@ -22,8 +22,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
-    first_name = Column(String)
-    last_name = Column(String)
+    username = Column(String)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
@@ -74,7 +73,7 @@ class Comment(Base):
     __tablename__ = "comment"
 
     id = Column(Integer, primary_key=True, index=True)
-    created_at = Column(DateTime)
+    created_at = Column(DateTime, server_default=func.now())
     comment = Column(String)
     ride_id = Column(Integer, ForeignKey('ride.id'))
     ride = relationship("Ride", back_populates="comments")
@@ -87,7 +86,6 @@ class Tag(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
-    count = Column(Integer)
     rides = relationship(
         "Ride",
         secondary=ride_tag_association_table,

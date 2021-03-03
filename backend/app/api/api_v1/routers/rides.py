@@ -11,13 +11,13 @@ import typing as t
 from app.db.session import get_db
 from app.db.crud import (
     get_rides_from_peloton,
-    add_rides_from_peloton
+    add_rides_from_peloton,
+    add_comment_to_ride
 )
-from app.db.schemas import Ride
+from app.db.schemas import Ride, CommentIn, CommentOut
 from app.core.auth import get_current_active_user, get_current_active_superuser
 
 rides_router = r = APIRouter()
-
 
 @r.get(
     "/init",
@@ -39,3 +39,15 @@ async def initialize_rides(
         return rides
     except:
         raise HTTPException(status_code=404, detail="Error initializing data")
+
+@r.post(
+    "/{ride_id}/comment",
+    response_model=CommentOut
+)
+async def create_comment(
+    response: Response,
+    comment: CommentIn,
+    current_user=Depends(get_current_active_user),
+    db=Depends(get_db),
+):
+    add_comment_to_ride(db, comment, current_user)
