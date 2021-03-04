@@ -88,20 +88,7 @@ def add_rides_from_peloton(
 ):
     try:
         for ride in rides:
-            ride_db = models.Ride(
-                ride_id = ride['id'],
-                description = ride['description'],
-                difficulty_estimate = ride['difficulty_estimate'],
-                duration = ride['duration'],
-                fitness_discipline_display_name = ride['fitness_discipline_display_name'],
-                image_url = ride['image_url'],
-                instructor_id = ride['instructor_id'],
-                title = ride['title'],
-                original_air_time = helpers.convert_epoch_to_datetime(ride['original_air_time']),
-                scheduled_start_time = helpers.convert_epoch_to_datetime(ride['scheduled_start_time'])
-            )
-            db.merge(ride_db)
-            db.commit()
+            create_ride(db, ride)
     except Exception as e:
         print(e)
         db.rollback()
