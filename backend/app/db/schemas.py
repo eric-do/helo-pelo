@@ -56,7 +56,8 @@ class Ride(BaseModel):
     scheduled_start_time: int
 
 class RideIn(Ride):
-    pass
+    class Config:
+        orm_mode = True
 
 
 class RideOut(Ride):

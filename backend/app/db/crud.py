@@ -6,6 +6,7 @@ from . import models, schemas, helpers
 from app.core.security import get_password_hash
 from datetime import datetime, timedelta
 from time import time
+from types import SimpleNamespace
 
 def get_user(db: Session, user_id: int):
     user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -86,12 +87,8 @@ def add_rides_from_peloton(
     db: Session,
     rides: t.List[schemas.RideIn]
 ):
-    try:
-        for ride in rides:
-            create_ride(db, ride)
-    except Exception as e:
-        print(e)
-        db.rollback()
+    for ride in rides:
+        create_ride(db, SimpleNamespace(**ride))
 
 
 def create_ride(
@@ -121,18 +118,22 @@ def add_comment_to_ride(
     ride_id: int,
     current_user: schemas.User
 ):
-    try:
-        comment_db = models.Comment(
-            comment = comment.comment,
-            ride_id = ride_id,
-            user_id = current_user.id
-        )
-        db.add(comment_db)
-        db.commit()
-        db.refresh(comment_db)
-        comment_db.created_at = int(comment_db.created_at.timestamp())
-        return comment_db
-    except Exception as e:
-        print(e)
-        db.rollback()
-        raise HTTPException(status_code=404, detail="Could not add comment")
+
+    comment_db = models.Comment(
+        comment = comment.comment,
+        ride_id = ride_id,
+        user_id = current_user.id
+    )
+    db.add(comment_db)
+    db.commit()
+    db.refresh(comment_db)
+    comment_db.created_at = int(comment_db.created_at.timestamp())
+    return comment_db
+
+def add_multiple_tags_to_ride(
+    db: Session,
+    tags: t.List[str],
+    ride_id: int,
+    current_user: schemas.User
+):
+    pass
