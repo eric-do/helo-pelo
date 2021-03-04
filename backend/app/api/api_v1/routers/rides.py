@@ -8,7 +8,6 @@ from fastapi import (
     status
 )
 import typing as t
-
 from app.db.session import get_db
 from app.db.crud import (
     get_rides_from_peloton,
@@ -19,17 +18,19 @@ from app.db.crud import (
 from app.db.schemas import (
     RideIn,
     RideOut,
+    RideDB,
     CommentIn,
     CommentOut
 )
 from app.core.auth import get_current_active_user, get_current_active_superuser
+from datetime import datetime
 
 rides_router = r = APIRouter()
 
-@r.get(
+@r.post(
     "/init",
-    response_model=t.List[RideOut],
     response_model_exclude_none=True,
+    status_code=status.HTTP_201_CREATED
 )
 async def initialize_rides(
     response: Response,
@@ -38,12 +39,11 @@ async def initialize_rides(
     current_user=Depends(get_current_active_superuser),
 ):
     """
-    Get rides from Peloton
+    Insert rides from Peloton to DB. Must be a superuser.
     """
     try:
         rides = get_rides_from_peloton(limit)
         add_rides_from_peloton(db, rides)
-        return rides
     except:
         raise HTTPException(status_code=404, detail="Error initializing data")
 
@@ -56,10 +56,12 @@ async def initialize_rides(
 async def add_ride(
     response: Response,
     ride: RideIn,
-    current_user=Depends(get_current_active_superuser),
+    current_user=Depends(get_current_active_user),
     db=Depends(get_db)
 ):
     ride = create_ride(db, ride)
+    ride.original_air_time = ride.original_air_time.timestamp()
+    ride.scheduled_start_time = ride.scheduled_start_time.timestamp()
     return ride
 
 @r.post(

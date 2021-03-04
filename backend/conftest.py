@@ -131,6 +131,29 @@ def test_superuser(test_db) -> models.User:
     return user
 
 
+@pytest.fixture
+def test_ride(test_db) -> models.Ride:
+    """
+    Ride for testing
+    """
+
+    ride = models.Ride(
+        ride_id = "TestRide123",
+        description = "Test description",
+        difficulty_estimate = 9.9,
+        duration = 180,
+        fitness_discipline_display_name = "Cycling",
+        image_url = "http://testdomain.com/image.png",
+        instructor_id = "Instructor1234",
+        title = "90 minutes of hell",
+        original_air_time = "2021-03-04 02:31:48",
+        scheduled_start_time = "2021-03-04 02:31:48"
+    )
+    test_db.add(ride)
+    test_db.commit()
+    return ride
+
+
 def verify_password_mock(first: str, second: str) -> bool:
     return True
 

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 import typing as t
-
+from datetime import datetime
 
 class UserBase(BaseModel):
     email: str
@@ -65,6 +65,12 @@ class RideOut(Ride):
     class Config:
         orm_mode = True
 
+class RideDB(Ride):
+    original_air_time: datetime
+    scheduled_start_time: datetime
+    class Config:
+        orm_mode = True
+
 
 class CommentIn(BaseModel):
     comment: str
@@ -72,7 +78,7 @@ class CommentIn(BaseModel):
 
 class CommentOut(CommentIn):
     created_at: int
-    username: str
+    user_id: int
 
     class Config:
         orm_mode = True

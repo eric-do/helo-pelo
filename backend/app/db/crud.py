@@ -2,9 +2,10 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import requests
 import typing as t
-
-from . import models, schemas
+from . import models, schemas, helpers
 from app.core.security import get_password_hash
+from datetime import datetime, timedelta
+from time import time
 
 def get_user(db: Session, user_id: int):
     user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -67,6 +68,7 @@ def edit_user(
     db.refresh(db_user)
     return db_user
 
+
 def get_rides_from_peloton(limit):
     try:
         rides = []
@@ -78,6 +80,7 @@ def get_rides_from_peloton(limit):
         raise HTTPException(status_code=404, detail="Item not found")
     finally:
         return rides
+
 
 def add_rides_from_peloton(
     db: Session,
@@ -94,14 +97,15 @@ def add_rides_from_peloton(
                 image_url = ride['image_url'],
                 instructor_id = ride['instructor_id'],
                 title = ride['title'],
-                original_air_time = ride['original_air_time'],
-                scheduled_start_time = ride['scheduled_start_time']
+                original_air_time = helpers.convert_epoch_to_datetime(ride['original_air_time']),
+                scheduled_start_time = helpers.convert_epoch_to_datetime(ride['scheduled_start_time'])
             )
             db.merge(ride_db)
             db.commit()
     except Exception as e:
         print(e)
         db.rollback()
+
 
 def create_ride(
     db: Session,
@@ -115,13 +119,14 @@ def create_ride(
         image_url = ride.image_url,
         instructor_id = ride.instructor_id,
         title = ride.title,
-        original_air_time = ride.original_air_time,
-        scheduled_start_time = ride.scheduled_start_time
+        original_air_time = helpers.convert_epoch_to_datetime(ride.original_air_time),
+        scheduled_start_time = helpers.convert_epoch_to_datetime(ride.scheduled_start_time)
     )
     db.add(ride_db)
     db.commit()
     db.refresh(ride_db)
     return ride_db
+
 
 def add_comment_to_ride(
     db: Session,
@@ -138,6 +143,7 @@ def add_comment_to_ride(
         db.add(comment_db)
         db.commit()
         db.refresh(comment_db)
+        comment_db.created_at = int(comment_db.created_at.timestamp())
         return comment_db
     except Exception as e:
         print(e)

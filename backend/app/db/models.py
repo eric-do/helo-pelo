@@ -59,8 +59,8 @@ class Ride(Base):
     image_url = Column(String)
     instructor_id = Column(String)
     title = Column(String)
-    original_air_time = Column(String)
-    scheduled_start_time = Column(Integer)
+    original_air_time = Column(DateTime)
+    scheduled_start_time = Column(DateTime)
     comments = relationship("Comment", back_populates="ride")
     tags = relationship(
         "Tag",
