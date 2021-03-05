@@ -68,7 +68,7 @@ def test_add_comment(
     user_token_headers
 ):
     global valid_ride
-    comment = { "comment": "test comment" }
+    comment = { "comment": "test comment #wow #awesome" }
     comment_response = client.post(
         f"/api/v1/rides/{test_ride.id}/comment",
         json=comment,

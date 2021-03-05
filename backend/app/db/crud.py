@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import exists
 import requests
 import typing as t
 from . import models, schemas, helpers
@@ -127,7 +128,7 @@ def add_comment_to_ride(
     db.add(comment_db)
     db.commit()
     db.refresh(comment_db)
-    comment_db.created_at = int(comment_db.created_at.timestamp())
+    # comment_db.created_at = int(comment_db.created_at.timestamp())
     return comment_db
 
 def add_multiple_tags_to_ride(
@@ -136,4 +137,7 @@ def add_multiple_tags_to_ride(
     ride_id: int,
     current_user: schemas.User
 ):
-    pass
+    tags_db = [models.Tag(name=tag) for tag in tags ]
+    ride_db: schemas.Ride = db.query(models.Ride).filter(models.Ride.id == ride_id).first()
+    ride_db.tags = ride_db.tags + tags_db
+    db.commit()

@@ -13,7 +13,8 @@ from app.db.crud import (
     get_rides_from_peloton,
     add_rides_from_peloton,
     create_ride,
-    add_comment_to_ride
+    add_comment_to_ride,
+    add_multiple_tags_to_ride
 )
 from app.db.schemas import (
     RideIn,
@@ -22,6 +23,7 @@ from app.db.schemas import (
     CommentIn,
     CommentOut
 )
+from app.db.helpers import parse_tags_from_text
 from app.core.auth import get_current_active_user, get_current_active_superuser
 from datetime import datetime
 
@@ -44,7 +46,8 @@ async def initialize_rides(
     try:
         rides = get_rides_from_peloton(limit)
         add_rides_from_peloton(db, rides)
-    except:
+    except Exception as e:
+        print(e)
         raise HTTPException(status_code=404, detail="Error initializing data")
 
 @r.post(
@@ -75,4 +78,7 @@ async def create_comment(
     current_user=Depends(get_current_active_user),
     db=Depends(get_db),
 ):
-    return add_comment_to_ride(db, comment, ride_id, current_user)
+    comment = add_comment_to_ride(db, comment, ride_id, current_user)
+    tags = parse_tags_from_text(comment.comment)
+    add_multiple_tags_to_ride(db, tags, ride_id, current_user)
+    return comment

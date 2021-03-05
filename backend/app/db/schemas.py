@@ -78,7 +78,7 @@ class CommentIn(BaseModel):
 
 
 class CommentOut(CommentIn):
-    created_at: int
+    created_at: datetime
     user_id: int
 
     class Config:
