@@ -53,7 +53,7 @@ class Ride(BaseModel):
     instructor_id: str
     title: str
     original_air_time: int = None
-    scheduled_start_time: int
+    scheduled_start_time: int = None
 
 class RideIn(Ride):
     class Config:

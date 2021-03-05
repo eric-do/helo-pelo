@@ -24,7 +24,7 @@ invalid_ride = {
 }
 
 
-def test_init_peloton_rides(client, superuser_token_headers):
+def test_initialize_peloton_rides(client, superuser_token_headers):
     response = client.post(
         "/api/v1/rides/init",
         headers=superuser_token_headers
@@ -32,7 +32,7 @@ def test_init_peloton_rides(client, superuser_token_headers):
     assert response.status_code == 201
 
 
-def test_add_ride_with_valid_data(
+def test_successfully_add_ride_with_valid_data(
     client,
     test_superuser,
     superuser_token_headers
@@ -47,7 +47,7 @@ def test_add_ride_with_valid_data(
     assert response.status_code == 201
 
 
-def test_add_ride_with_invalid_data(
+def test_unsuccessfully_add_ride_with_invalid_data(
     client,
     test_superuser,
     superuser_token_headers
@@ -61,13 +61,12 @@ def test_add_ride_with_invalid_data(
     assert response.status_code == 422
 
 
-def test_add_comment(
+def test_successfully_add_valid_comment_without_tags(
     client,
     test_user,
     test_ride,
     user_token_headers
 ):
-    global valid_ride
     comment = { "comment": "test comment #wow #awesome" }
     comment_response = client.post(
         f"/api/v1/rides/{test_ride.id}/comment",
@@ -75,6 +74,17 @@ def test_add_comment(
         headers=user_token_headers
     )
     comment_db = comment_response.json()
+    print(test_ride.tags)
     assert comment_response.status_code == 200
     assert comment['comment'] == comment_db['comment']
     assert comment_db['user_id'] == test_user.id
+    assert test_ride.comments[0].comment == comment['comment']
+    assert len(test_ride.tags) == 2
+
+
+def test_successfully_add_tag_to_comment(
+    client,
+    user_token_headers,
+    test_comment
+):
+    pass

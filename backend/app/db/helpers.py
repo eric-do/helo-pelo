@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 
 def convert_epoch_to_datetime(unix_ts):
+    if not unix_ts:
+        return None
     return (datetime.fromtimestamp(unix_ts) - timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
 
 def parse_tags_from_text(text):

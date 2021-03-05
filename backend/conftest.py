@@ -153,6 +153,21 @@ def test_ride(test_db) -> models.Ride:
     test_db.commit()
     return ride
 
+@pytest.fixture
+def test_comment(
+    test_db,
+    test_ride,
+    test_user,
+) -> models.Comment:
+    comment_db = models.Comment(
+        comment = "This is a #test comment with #awesome tags",
+        ride_id = test_ride.id,
+        user_id = test_user.id
+    )
+    test_db.add(comment_db)
+    test_db.commit()
+    test_db.refresh(comment_db)
+    return comment_db
 
 def verify_password_mock(first: str, second: str) -> bool:
     return True
