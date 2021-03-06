@@ -61,30 +61,35 @@ def test_unsuccessfully_add_ride_with_invalid_data(
     assert response.status_code == 422
 
 
-def test_successfully_add_valid_comment_without_tags(
+def test_successfully_add_valid_comment_with_tags(
     client,
     test_user,
     test_ride,
     user_token_headers
 ):
+    original_tag_count = len(test_ride.tags)
     comment = { "comment": "test comment #wow #awesome" }
     comment_response = client.post(
-        f"/api/v1/rides/{test_ride.id}/comment",
+        f"/api/v1/rides/{test_ride.id}/comments",
         json=comment,
         headers=user_token_headers
     )
     comment_db = comment_response.json()
-    print(test_ride.tags)
     assert comment_response.status_code == 200
     assert comment['comment'] == comment_db['comment']
     assert comment_db['user_id'] == test_user.id
     assert test_ride.comments[0].comment == comment['comment']
-    assert len(test_ride.tags) == 2
+    assert len(test_ride.tags) == original_tag_count + 2
 
 
-def test_successfully_add_tag_to_comment(
+def test_get_ride(
     client,
-    user_token_headers,
+    test_ride,
     test_comment
 ):
-    pass
+    response = client.get(f"/api/v1/rides/{test_ride.id}")
+    ride = response.json()
+    test_ride_as_dict = vars(test_ride)
+    for key in ride:
+        assert ride[key] == test_ride_as_dict[key]
+    assert ride["tags"] == test_ride.tags

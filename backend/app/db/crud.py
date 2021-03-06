@@ -113,6 +113,16 @@ def create_ride(
     return ride_db
 
 
+def read_ride(
+    db: Session,
+    ride_id: int
+):
+    ride = db.query(models.Ride).filter_by(id=ride_id).first()
+    print(ride.title)
+    print(ride.tags)
+    return ride
+
+
 def add_comment_to_ride(
     db: Session,
     comment: schemas.CommentIn,

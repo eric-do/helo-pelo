@@ -43,6 +43,7 @@ class TokenData(BaseModel):
     email: str = None
     permissions: str = "user"
 
+
 class Ride(BaseModel):
     description: str
     ride_id: str = None
@@ -55,6 +56,14 @@ class Ride(BaseModel):
     original_air_time: int = None
     scheduled_start_time: int = None
 
+
+class Tag(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
 class RideIn(Ride):
     class Config:
         orm_mode = True
@@ -62,9 +71,10 @@ class RideIn(Ride):
 
 class RideOut(Ride):
     id: int
-
+    tags: t.List[Tag]
     class Config:
         orm_mode = True
+
 
 class RideDB(Ride):
     original_air_time: datetime
@@ -84,10 +94,3 @@ class CommentOut(CommentIn):
     class Config:
         orm_mode = True
 
-# class RideOut(Ride):
-#     id: int
-#     ride_id: str
-#     comments: t.List[CommentOut]
-
-#     class Config:
-#         orm_mode = True

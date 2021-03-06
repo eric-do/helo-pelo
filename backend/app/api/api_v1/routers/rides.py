@@ -13,6 +13,7 @@ from app.db.crud import (
     get_rides_from_peloton,
     add_rides_from_peloton,
     create_ride,
+    read_ride,
     add_comment_to_ride,
     add_multiple_tags_to_ride
 )
@@ -67,8 +68,24 @@ async def add_ride(
     ride.scheduled_start_time = ride.scheduled_start_time.timestamp()
     return ride
 
+@r.get(
+    "/{ride_id}",
+    response_model=RideOut,
+    status_code=200
+)
+async def get_ride(
+    response: Response,
+    ride_id: int,
+    db=Depends(get_db),
+    response_model=RideOut
+):
+    ride = read_ride(db, ride_id)
+    ride.original_air_time = ride.original_air_time.timestamp()
+    ride.scheduled_start_time = ride.scheduled_start_time.timestamp()
+    return ride
+
 @r.post(
-    "/{ride_id}/comment",
+    "/{ride_id}/comments",
     response_model=CommentOut
 )
 async def create_comment(
