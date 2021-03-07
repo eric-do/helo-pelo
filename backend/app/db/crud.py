@@ -148,17 +148,6 @@ def add_multiple_tags_to_ride(
     ride_id: int,
     current_user: schemas.User
 ):
-    # For each tag being added
-        # If tag already exists in table,
-        #   If tag exists in ride tags
-        #       Increment tag count for ride
-        #   Else
-        #       Create new association with existing tag
-        #       Add association to ride but do NOT insert to table (or handle conflict)
-        # Else tag does not exist in table
-        #   Create new tag model instance
-        #   Create new association with tag
-        #   Append new association to ride
     unique_tags = set(tags)
     ride_db: schemas.Ride = db.query(models.Ride).filter(models.Ride.id == ride_id).first()
     for tag in unique_tags:
@@ -166,20 +155,12 @@ def add_multiple_tags_to_ride(
         if existing_db_tag:
             existing_ride_tag = next((t for t in ride_db.tags if t.tag.name == tag), None)
             if existing_ride_tag:
-                association = db.query(models.RideTagAssociation).filter_by(
-                    ride_id=ride_db.id,
-                    tag_id=existing_db_tag.id
-                ).first()
-                association.tag_count = association.tag_count + 1
+                _update_ride_tag_association(db, ride_db, existing_db_tag)
             else:
-                association = models.RideTagAssociation()
-                association.tag = existing_db_tag
-                ride_db.tags.append(association)
+                _create_new_ride_tag_association(db, ride_db, existing_tag=existing_db_tag)
         else:
-            association = models.RideTagAssociation()
-            association.tag = models.Tag(name=tag)
-            ride_db.tags.append(association)
-    db.commit()
+            _create_new_ride_tag_association(db, ride_db, tag_name=tag)
+
 
 def _update_ride_tag_association(db, ride, tag) -> None:
     association = db.query(models.RideTagAssociation).filter_by(
@@ -188,6 +169,7 @@ def _update_ride_tag_association(db, ride, tag) -> None:
     ).first()
     association.tag_count = association.tag_count + 1
     db.commit()
+
 
 def _create_new_ride_tag_association(db, ride, tag_name=None, existing_tag=None):
     association = models.RideTagAssociation()
