@@ -82,6 +82,30 @@ def test_successfully_add_valid_comment_with_tags(
     assert len(test_ride.tags) == original_tag_count + 2
 
 
+def test_successfully_add_comment_with_duplicate_tags(
+    client,
+    test_user,
+    test_ride,
+    user_token_headers
+):
+    original_tag_count = len(test_ride.tags)
+    comment = { "comment": "test comment #duplicate #duplicate" }
+    comment_response = client.post(
+        f"/api/v1/rides/{test_ride.id}/comments",
+        json=comment,
+        headers=user_token_headers
+    )
+    comment_db = comment_response.json()
+    assert len(test_ride.tags) == original_tag_count + 1
+
+def test_increment_tag_count_for_existing_tags(
+    client,
+    test_user,
+    test_ride, # update with a ride with tags
+    user_token_headers
+):
+    pass
+
 def test_get_ride(
     client,
     test_ride,

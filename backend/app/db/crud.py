@@ -97,15 +97,15 @@ def create_ride(
     ride: schemas.RideIn
 ):
     ride_db = models.Ride(
-        description = ride.description,
-        difficulty_estimate = ride.difficulty_estimate,
-        duration = ride.duration,
-        fitness_discipline_display_name = ride.fitness_discipline_display_name,
-        image_url = ride.image_url,
-        instructor_id = ride.instructor_id,
-        title = ride.title,
-        original_air_time = helpers.convert_epoch_to_datetime(ride.original_air_time),
-        scheduled_start_time = helpers.convert_epoch_to_datetime(ride.scheduled_start_time)
+        description=ride.description,
+        difficulty_estimate=ride.difficulty_estimate,
+        duration=ride.duration,
+        fitness_discipline_display_name=ride.fitness_discipline_display_name,
+        image_url=ride.image_url,
+        instructor_id=ride.instructor_id,
+        title=ride.title,
+        original_air_time=helpers.convert_epoch_to_datetime(ride.original_air_time),
+        scheduled_start_time=helpers.convert_epoch_to_datetime(ride.scheduled_start_time)
     )
     db.add(ride_db)
     db.commit()
@@ -131,9 +131,9 @@ def add_comment_to_ride(
 ):
 
     comment_db = models.Comment(
-        comment = comment.comment,
-        ride_id = ride_id,
-        user_id = current_user.id
+        comment=comment.comment,
+        ride_id=ride_id,
+        user_id=current_user.id
     )
     db.add(comment_db)
     db.commit()
@@ -141,13 +141,56 @@ def add_comment_to_ride(
     # comment_db.created_at = int(comment_db.created_at.timestamp())
     return comment_db
 
+
 def add_multiple_tags_to_ride(
     db: Session,
     tags: t.List[str],
     ride_id: int,
     current_user: schemas.User
 ):
-    tags_db = [models.Tag(name=tag) for tag in tags ]
+    # For each tag being added
+        # If tag already exists in table,
+        #   If tag exists in ride tags
+        #       Increment tag count for ride
+        #   Else
+        #       Create new association with existing tag
+        #       Add association to ride but do NOT insert to table (or handle conflict)
+        # Else tag does not exist in table
+        #   Create new tag model instance
+        #   Create new association with tag
+        #   Append new association to ride
+    unique_tags = set(tags)
     ride_db: schemas.Ride = db.query(models.Ride).filter(models.Ride.id == ride_id).first()
-    ride_db.tags = ride_db.tags + tags_db
+    for tag in unique_tags:
+        existing_db_tag = db.query(models.Tag).filter(models.Tag.name == tag).first()
+        if existing_db_tag:
+            existing_ride_tag = next((t for t in ride_db.tags if t.tag.name == tag), None)
+            if existing_ride_tag:
+                association = db.query(models.RideTagAssociation).filter_by(
+                    ride_id=ride_db.id,
+                    tag_id=existing_db_tag.id
+                ).first()
+                association.tag_count = association.tag_count + 1
+            else:
+                association = models.RideTagAssociation()
+                association.tag = existing_db_tag
+                ride_db.tags.append(association)
+        else:
+            association = models.RideTagAssociation()
+            association.tag = models.Tag(name=tag)
+            ride_db.tags.append(association)
+    db.commit()
+
+def _update_ride_tag_association(db, ride, tag) -> None:
+    association = db.query(models.RideTagAssociation).filter_by(
+        ride_id=ride.id,
+        tag_id=tag.id
+    ).first()
+    association.tag_count = association.tag_count + 1
+    db.commit()
+
+def _create_new_ride_tag_association(db, ride, tag_name=None, existing_tag=None):
+    association = models.RideTagAssociation()
+    association.tag = existing_tag if existing_tag else models.Tag(name=tag_name)
+    ride.tags.append(association)
     db.commit()

@@ -12,10 +12,20 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .session import Base
 
-ride_tag_association_table = Table('ride_tags', Base.metadata,
-    Column('ride_id', Integer, ForeignKey('ride.id')),
-    Column('tag_id', Integer, ForeignKey('tag.id'))
-)
+# ride_tag_association_table = Table('ride_tags', Base.metadata,
+#     Column('ride_id', Integer, ForeignKey('ride.id')),
+#     Column('tag_id', Integer, ForeignKey('tag.id'))
+# )
+
+class RideTagAssociation(Base):
+    __tablename__ = 'ride_tag'
+
+    ride_id = Column(Integer, ForeignKey('ride.id'), primary_key=True)
+    tag_id = Column(Integer, ForeignKey('tag.id'), primary_key=True)
+    tag_count = Column(Integer, default=1)
+    ride = relationship("Ride", back_populates="tags")
+    tag = relationship("Tag", back_populates="rides")
+
 
 class User(Base):
     __tablename__ = "user"
@@ -63,9 +73,8 @@ class Ride(Base):
     scheduled_start_time = Column(DateTime)
     comments = relationship("Comment", back_populates="ride")
     tags = relationship(
-        "Tag",
-        secondary=ride_tag_association_table,
-        back_populates="rides"
+        "RideTagAssociation",
+        back_populates="ride"
     )
 
 
@@ -85,10 +94,9 @@ class Tag(Base):
     __tablename__ = "tag"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+    name = Column(String, index=True, unique=True)
     rides = relationship(
-        "Ride",
-        secondary=ride_tag_association_table,
-        back_populates="tags"
+        "RideTagAssociation",
+        back_populates="tag"
     )
 
