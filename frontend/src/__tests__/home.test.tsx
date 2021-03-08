@@ -7,6 +7,6 @@ it('Home renders correctly', () => {
   const home = render(<Home />);
   expect(home.getByText('Admin Dashboard')).toBeInTheDocument();
   expect(home.getByText('Protected Route')).toBeInTheDocument();
-  expect(home.getByText('Login')).toBeInTheDocument();
-  expect(home.getByText('Sign Up')).toBeInTheDocument();
+  // expect(home.getByText('Login')).toBeInTheDocument();
+  // expect(home.getByText('Sign Up')).toBeInTheDocument();
 });

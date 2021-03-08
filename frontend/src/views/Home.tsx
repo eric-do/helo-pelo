@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-
 import { getMessage } from '../utils/api';
 import { isAuthenticated } from '../utils/auth';
 import RideList from './rides/RideList';
+import TopAppBar from '../navigation/TopAppBar';
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -27,6 +27,7 @@ export const Home: FC = () => {
 
   return (
     <>
+      <TopAppBar />
       {!message && !error && (
         <a className={classes.link} href="#" onClick={() => queryBackend()}>
           Click to make request to backend

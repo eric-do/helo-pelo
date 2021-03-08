@@ -1,40 +1,23 @@
 import React, { FC, useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { getRides } from '../../utils/api';
+import type { Comment, Tag, Ride } from '../../types';
+import RideCard from './RideCard';
 
-type Comment = {
-  comment: string,
-  created_at: string,
-  user_id: number
-}
-
-type Tag = {
-  tag_id: number,
-  ride_id: number,
-  tag_count: number,
-  tag: {
-    name: string
-  }
-}
-
-type Ride = {
-  description: string,
-  ride_id: string,
-  difficulty_estimate: number,
-  duration: number,
-  fitness_discipline_display_name: string,
-  image_url: string,
-  instructor_id: string,
-  title: string
-  original_air_time: string
-  scheduled_start_time: string
-  comments: Comment[],
-  tags: Tag[]
-};
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    cardList: {
+      display: 'flex',
+      flexDirection: 'column',
+      width: '70%'
+    }
+  })
+);
 
 const RideList: FC = () => {
   const [rides, setRides] = useState<Ride[]>([]);
   const [error, setError] = useState<string>('');
+  const classes = useStyles();
 
   useEffect(() => {
     (async () => {
@@ -49,11 +32,11 @@ const RideList: FC = () => {
   }, [])
 
   return (
-    <>
+    <div className={classes.cardList}>
       {
-        rides ? rides.map(ride => <div>{ride.title}</div>) : null
+        rides && rides.map(ride => <RideCard ride={ride} />)
       }
-    </>
+    </div>
   );
 }
 
