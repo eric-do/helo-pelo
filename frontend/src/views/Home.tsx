@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { getMessage } from '../utils/api';
 import { isAuthenticated } from '../utils/auth';
+import RideList from './rides/RideList';
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -31,6 +32,7 @@ export const Home: FC = () => {
           Click to make request to backend
         </a>
       )}
+      <RideList />
       {message && (
         <p>
           <code>{message}</code>

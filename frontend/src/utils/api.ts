@@ -11,3 +11,9 @@ export const getMessage = async () => {
 
   return Promise.reject('Failed to get message from backend');
 };
+
+export const getRides = async () => {
+  const response = await fetch(`${BACKEND_URL}/rides/`);
+  const rides = await response.json();
+  return rides
+}

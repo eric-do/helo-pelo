@@ -56,6 +56,7 @@ class Instructor(Base):
     image_url = Column(String)
     instructor_hero_image_url = Column(String)
 
+
 class Comment(Base):
     __tablename__ = "comment"
 
