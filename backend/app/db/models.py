@@ -56,6 +56,17 @@ class Instructor(Base):
     image_url = Column(String)
     instructor_hero_image_url = Column(String)
 
+class Comment(Base):
+    __tablename__ = "comment"
+
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=func.now())
+    comment = Column(String)
+    ride_id = Column(Integer, ForeignKey('ride.id'))
+    ride = relationship("Ride", back_populates="comments")
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship("User", back_populates="comments")
+
 
 class Ride(Base):
     __tablename__ = "ride"
@@ -71,23 +82,16 @@ class Ride(Base):
     title = Column(String)
     original_air_time = Column(DateTime)
     scheduled_start_time = Column(DateTime)
-    comments = relationship("Comment", back_populates="ride")
+    comments = relationship(
+        "Comment",
+        back_populates="ride",
+        order_by=Comment.created_at.asc()
+    )
     tags = relationship(
         "RideTagAssociation",
-        back_populates="ride"
+        back_populates="ride",
+        order_by=RideTagAssociation.tag_count.desc()
     )
-
-
-class Comment(Base):
-    __tablename__ = "comment"
-
-    id = Column(Integer, primary_key=True, index=True)
-    created_at = Column(DateTime, default=func.now())
-    comment = Column(String)
-    ride_id = Column(Integer, ForeignKey('ride.id'))
-    ride = relationship("Ride", back_populates="comments")
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship("User", back_populates="comments")
 
 
 class Tag(Base):

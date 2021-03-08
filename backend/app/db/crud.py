@@ -122,6 +122,14 @@ def read_ride(
     return ride
 
 
+def get_rides(
+    db: Session,
+    limit: int=100,
+    skip: int=0
+):
+    return db.query(models.Ride).limit(limit).offset(skip).all()
+
+
 def add_comment_to_ride(
     db: Session,
     comment: schemas.CommentIn,

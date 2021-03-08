@@ -102,5 +102,7 @@ class RideOut(Ride):
 class RideDB(Ride):
     original_air_time: datetime
     scheduled_start_time: datetime
+    comments: t.List[CommentOut]
+    tags: t.List[RideTagAssociation]
     class Config:
         orm_mode = True

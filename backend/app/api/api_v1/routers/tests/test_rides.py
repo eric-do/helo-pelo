@@ -24,12 +24,25 @@ invalid_ride = {
 }
 
 
-def test_initialize_peloton_rides(client, superuser_token_headers):
-    response = client.post(
-        "/api/v1/rides/init",
-        headers=superuser_token_headers
-    )
-    assert response.status_code == 201
+# def test_initialize_peloton_rides(client, superuser_token_headers):
+#     response = client.post(
+#         "/api/v1/rides/init",
+#         headers=superuser_token_headers
+#     )
+#     assert response.status_code == 201
+
+
+def test_get_rides(client, test_ride):
+    response = client.get("/api/v1/rides/")
+    rides = response.json()
+    first_ride = rides[0]
+    assert len(rides) > 0
+    assert "description" in first_ride
+    assert "difficulty_estimate" in first_ride
+    assert "image_url" in first_ride
+    assert "title" in first_ride
+    assert "original_air_time" in first_ride
+    assert "scheduled_start_time" in first_ride
 
 
 def test_successfully_add_ride_with_valid_data(
