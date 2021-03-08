@@ -118,8 +118,7 @@ def read_ride(
     ride_id: int
 ):
     ride = db.query(models.Ride).filter_by(id=ride_id).first()
-    print(ride.title)
-    print(ride.tags)
+    print(ride.comments)
     return ride
 
 
@@ -163,6 +162,11 @@ def add_multiple_tags_to_ride(
 
 
 def _update_ride_tag_association(db, ride, tag) -> None:
+    '''Update exisiting ride/tag association
+
+    If a ride has already been tagged with a particular tag, the count of that
+    tag associated with the ride is simply incremented.
+    '''
     association = db.query(models.RideTagAssociation).filter_by(
         ride_id=ride.id,
         tag_id=tag.id
@@ -172,6 +176,11 @@ def _update_ride_tag_association(db, ride, tag) -> None:
 
 
 def _create_new_ride_tag_association(db, ride, tag_name=None, existing_tag=None):
+    '''Create a new ride/tag association
+
+    If a tag exists in the DB, it's used in the new association. Otherwise a new DB tag
+    is created and associated to the ride.
+    '''
     association = models.RideTagAssociation()
     association.tag = existing_tag if existing_tag else models.Tag(name=tag_name)
     ride.tags.append(association)

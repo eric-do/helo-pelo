@@ -44,19 +44,6 @@ class TokenData(BaseModel):
     permissions: str = "user"
 
 
-class Ride(BaseModel):
-    description: str
-    ride_id: str = None
-    difficulty_estimate: float
-    duration: int
-    fitness_discipline_display_name: str
-    image_url: str = None
-    instructor_id: str
-    title: str
-    original_air_time: int = None
-    scheduled_start_time: int = None
-
-
 class Tag(BaseModel):
     name: str
 
@@ -64,21 +51,12 @@ class Tag(BaseModel):
         orm_mode = True
 
 
-class RideIn(Ride):
-    class Config:
-        orm_mode = True
+class RideTagAssociation(BaseModel):
+    tag_id: int
+    ride_id: int
+    tag_count: int
+    tag: Tag
 
-
-class RideOut(Ride):
-    id: int
-    tags: t.List[Tag]
-    class Config:
-        orm_mode = True
-
-
-class RideDB(Ride):
-    original_air_time: datetime
-    scheduled_start_time: datetime
     class Config:
         orm_mode = True
 
@@ -94,3 +72,35 @@ class CommentOut(CommentIn):
     class Config:
         orm_mode = True
 
+
+class Ride(BaseModel):
+    description: str
+    ride_id: str = None
+    difficulty_estimate: float
+    duration: int
+    fitness_discipline_display_name: str
+    image_url: str = None
+    instructor_id: str
+    title: str
+    original_air_time: int = None
+    scheduled_start_time: int = None
+
+
+class RideIn(Ride):
+    class Config:
+        orm_mode = True
+
+
+class RideOut(Ride):
+    id: int
+    comments: t.List[CommentOut]
+    tags: t.List[RideTagAssociation]
+    class Config:
+        orm_mode = True
+
+
+class RideDB(Ride):
+    original_air_time: datetime
+    scheduled_start_time: datetime
+    class Config:
+        orm_mode = True
