@@ -65,11 +65,15 @@ const rideWithCommentsAndTags: Ride = {
   ]
 }
 
-it('Home renders correctly', () => {
+it('Ride Card renders correctly', () => {
   const ride = render(<RideCard ride={rideWithCommentsAndTags}/>);
+  const localTimeStamp = getLocalStringFromTimeStamp(rideWithCommentsAndTags.original_air_time);
+
   expect(ride.getByText(rideWithCommentsAndTags.title)).toBeInTheDocument();
   expect(ride.getByText(rideWithCommentsAndTags.description)).toBeInTheDocument();
-  expect(ride.getByText(
-    getLocalStringFromTimeStamp(rideWithCommentsAndTags.original_air_time)
-  )).toBeInTheDocument();
+  expect(ride.getByText(localTimeStamp)).toBeInTheDocument();
+
+  rideWithCommentsAndTags.tags.forEach(tag => {
+    expect(ride.getByText(tag.tag.name)).toBeInTheDocument();
+  })
 });

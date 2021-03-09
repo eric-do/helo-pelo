@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   header: {
-    backgroundColor: 'rgb(228, 231, 235)',
+    backgroundColor: '#121212',
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',

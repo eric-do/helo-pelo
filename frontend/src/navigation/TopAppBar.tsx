@@ -19,7 +19,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     appBar: {
       justifyContent: "space-between",
-      flexDirection: "row"
+      flexDirection: "row",
+      backgroundColor: 'rgba(255,255,255,0.12)'
     },
     toolBar: {
       width: "100%",
