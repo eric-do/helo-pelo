@@ -9,7 +9,12 @@ const useStyles = makeStyles((theme: Theme) =>
     cardList: {
       display: 'flex',
       flexDirection: 'column',
-      width: '70%'
+      [theme.breakpoints.down('sm')]: {
+        width: '90%',
+      },
+      [theme.breakpoints.up('md')]: {
+        width: '60%',
+      }
     }
   })
 );
@@ -34,7 +39,7 @@ const RideList: FC = () => {
   return (
     <div className={classes.cardList}>
       {
-        rides && rides.map(ride => <RideCard ride={ride} />)
+        rides && rides.map(ride => <RideCard ride={ride} key={ride.id}/>)
       }
     </div>
   );

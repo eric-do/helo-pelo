@@ -14,6 +14,7 @@ export type Tag = {
 }
 
 export type Ride = {
+  id: number,
   description: string,
   ride_id: string,
   difficulty_estimate: number,
