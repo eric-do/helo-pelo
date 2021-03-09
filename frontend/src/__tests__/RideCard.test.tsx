@@ -7,6 +7,7 @@ import { getLocalStringFromTimeStamp } from '../utils/datetime'
 import { Ride } from '../types';
 
 const rideWithCommentsAndTags: Ride = {
+  "id": 10,
   "description": "Combine your cardio and strength training in one efficient and effective package! Push yourself by alternating between intervals-based running segments on the Tread and strength training on the floor.",
   "ride_id": "3863ad9c30af4635b3c2be1aea766fff",
   "difficulty_estimate": 7.7485,

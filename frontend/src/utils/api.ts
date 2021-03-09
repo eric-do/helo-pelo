@@ -1,4 +1,5 @@
 import { BACKEND_URL } from '../config';
+import axios from 'axios';
 
 export const getMessage = async () => {
   const response = await fetch(BACKEND_URL);
@@ -15,5 +16,28 @@ export const getMessage = async () => {
 export const getRides = async () => {
   const response = await fetch(`${BACKEND_URL}/rides/`);
   const rides = await response.json();
-  return rides
+  return rides;
+}
+
+export const getRide = async (ride_id: number) => {
+  const response = await fetch(`${BACKEND_URL}/rides/${ride_id}`);
+  const ride = await response.json();
+  return ride;
+}
+
+export const addComment = async (ride_id: number, comment: string) => {
+  const token = localStorage.getItem('token');
+  console.log(token)
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+  const data = { comment };
+
+  await axios.post(
+    `${BACKEND_URL}/rides/${ride_id}/comments`,
+    data,
+    config
+  )
 }

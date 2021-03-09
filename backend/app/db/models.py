@@ -86,7 +86,7 @@ class Ride(Base):
     comments = relationship(
         "Comment",
         back_populates="ride",
-        order_by=Comment.created_at.asc()
+        order_by=Comment.created_at.desc()
     )
     tags = relationship(
         "RideTagAssociation",

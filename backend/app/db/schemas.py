@@ -100,6 +100,7 @@ class RideOut(Ride):
 
 
 class RideDB(Ride):
+    id: int
     original_air_time: datetime
     scheduled_start_time: datetime
     comments: t.List[CommentOut]
