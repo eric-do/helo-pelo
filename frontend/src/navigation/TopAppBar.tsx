@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
     appBar: {
       justifyContent: "space-between",
       flexDirection: "row",
-      backgroundColor: 'rgba(255,255,255,0.12)'
+      backgroundColor: '#303030'
     },
     toolBar: {
       width: "100%",
@@ -49,7 +49,7 @@ const TopAppBar: FC = props => {
 
   return (
     <div className={classes.root}>
-      <AppBar className={classes.appBar} position="static">
+      <AppBar className={classes.appBar} position="fixed">
         <Toolbar className={classes.toolBar}>
           <IconButton
             edge="start"
