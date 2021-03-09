@@ -12,13 +12,16 @@ import {
   IconButton,
   Typography,
   TextField,
-  Chip
+  Chip,
+  Badge,
+  Box
 } from '@material-ui/core';
 import {
   Favorite,
   Share,
   ExpandMore,
-  MoreVert
+  MoreVert,
+  Add
 } from '@material-ui/icons';
 import { getLocalStringFromTimeStamp } from '../../utils/datetime'
 import { red, purple, blue } from '@material-ui/core/colors';
@@ -52,7 +55,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardContent: {
       textAlign: 'left',
-      color: 'white'
+      color: 'white',
+      marginBottom: 10
     },
     iconButton: {
       color: blue[200],
@@ -84,16 +88,19 @@ const useStyles = makeStyles((theme: Theme) =>
     currentTag: {
       backgroundColor: blue[200],
       marginRight: 10,
-      marginBottom: 10
+      marginBottom: 10,
     }
   })
 );
 
 const RideCard = ({ ride }: RideCardProps) => {
-  const [placeholder, setPlaceholder] = useState<string>('Add tag(s)');
+  const initialPlaceholder = 'Add tag(s)';
+  const [placeholder, setPlaceholder] = useState<string>(initialPlaceholder);
+  const [label, setLabel] = useState<string>('')
   const classes = useStyles();
   const air_date = getLocalStringFromTimeStamp(ride.original_air_time)
   const clearPlaceholder = () => setPlaceholder('');
+  const resetPlaceholder = () => setPlaceholder(initialPlaceholder);
 
   return(
     <Card className={classes.root}>
@@ -122,13 +129,20 @@ const RideCard = ({ ride }: RideCardProps) => {
         title={ride.title}
       />
       <CardContent>
-        <div className={classes.tagContinaer}>
+        <Box className={classes.tagContinaer}>
           {
             ride.tags.length > 0 && ride.tags.map(tag => (
-              <Chip className={classes.currentTag} label={tag.tag.name} />
+              <Badge color="secondary" overlap="circle" badgeContent={tag.tag_count} max={999}>
+                  <Chip className={classes.currentTag} label={tag.tag.name} />
+              </Badge>
             ))
           }
-        </div>
+          <Chip
+            className={classes.currentTag}
+            label="Tag"
+            icon={<Add />}
+          />
+        </Box>
         <Typography
           className={classes.cardContent}
           variant="body2"
@@ -142,8 +156,8 @@ const RideCard = ({ ride }: RideCardProps) => {
             className={classes.tagForm}
             color="secondary"
             id="add-tag"
-            label="Add tag(s)"
             onFocus={clearPlaceholder}
+            onBlur={resetPlaceholder}
             placeholder={placeholder}
             InputProps={{ className: classes.formInput }}
           />
