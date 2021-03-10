@@ -31,6 +31,7 @@ import {
 import { getLocalStringFromTimeStamp } from '../../utils/datetime'
 import { red, purple, blue } from '@material-ui/core/colors';
 import { getRide, addComment } from '../../utils/api'
+import { logout } from '../../utils/auth';
 
 type RideCardProps = {
   ride: Ride
@@ -59,6 +60,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardHeader: {
       textAlign: 'center',
+      fontWeight: 600,
+      fontSize: 15,
       color: bodyFontColor
     },
     cardSubheader: {
@@ -119,19 +122,32 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '95%',
       backgroundColor: 'rgba(255,255,255,0.05)'
     },
-    comment: {
+    commentUser: {
+      fontWeight: 600,
       color: bodyFontColor
+    },
+    commentText: {
+      color: bodyFontColor
+    },
+    commentListFooter: {
+      color: bodyFontColor,
+      display: 'flex',
+      justifyContent:'center',
+      fontSize: 14,
+      marginTop: 5
     }
   })
 );
 
 const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const classes = useStyles();
-
+  const initialCommentCount = Math.min(rideProp.comments.length, 2);
   const initialPlaceholder = 'Add tag(s)';
   const [placeholder, setPlaceholder] = useState<string>(initialPlaceholder);
   const [comment, setComment] = useState<string>('');
   const [ride, setRide] = useState<Ride>(rideProp);
+  const [error, setError] = useState<Error | null>(null);
+  const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
   const clearPlaceholder = () => setPlaceholder('');
   const resetPlaceholder = () => setPlaceholder(initialPlaceholder);
 
@@ -145,10 +161,16 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
       await addComment(ride.id, comment);
       const updatedRide = await getRide(ride.id);
       setRide(updatedRide);
-    } catch(e) {
-      console.log(e);
+    } catch(err) {
+      if (err.response.status === 401) {
+        setError(err)
+        logout();
+      }
     }
   }
+
+  const loadMoreComments = () => setCommentCount(commentCount + 5);
+  const resetComments = () => setCommentCount(initialCommentCount);
 
   const air_date = getLocalStringFromTimeStamp(ride.original_air_time)
 
@@ -170,7 +192,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
               <MoreVert className={classes.icon}/>
             </IconButton>
           }
-          title={ride.title}
+          title={<Typography className={classes.cardHeader}>{ride.title}</Typography>}
           subheader={<Typography className={classes.cardSubheader}>{air_date}</Typography>}
         />
         <CardMedia
@@ -190,7 +212,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
                 >
                     <Chip
                       className={classes.currentTag}
-                      label={tag.tag.name}
+                      label={`#${tag.tag.name}`}
                       clickable
                     />
                 </Badge>
@@ -233,14 +255,30 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
         ride.comments.length > 0 &&
         <List className={classes.commentList}>
           {
-            ride.comments.map(({ comment }) => (
+            ride.comments.slice(0, commentCount).map(({ comment }) => (
               <>
-                <ListItem className={classes.comment} >
-                  <ListItemText primary="User" secondary={comment} />
+                <ListItem >
+                  <ListItemText
+                    primary={<Typography className={classes.commentUser}>User</Typography>}
+                    secondary={<Typography className={classes.commentText}>{comment}</Typography>}
+                    onClick={() => console.log('hi')}
+                  />
                 </ListItem>
                 <Divider component="li" />
               </>
             ))
+          }
+          {
+            commentCount < ride.comments.length &&
+            <Box className={classes.commentListFooter}>
+              <span onClick={loadMoreComments}>See more comments</span>
+            </Box>
+          }
+          {
+            commentCount >= ride.comments.length && commentCount > initialCommentCount &&
+            <Box className={classes.commentListFooter}>
+              <span onClick={resetComments}>Hide comments</span>
+            </Box>
           }
         </List>
       }
