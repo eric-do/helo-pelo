@@ -12,6 +12,42 @@ valid_ride = {
     "scheduled_start_time": 23525211
 }
 
+valid_ride_first = {
+    "description": "This is a test description",
+    "difficulty_estimate": 9.9,
+    "duration": 180,
+    "fitness_discipline_display_name": "Cycling",
+    "image_url": "http://testdomain.com/image.png",
+    "instructor_id": "234TestID",
+    "title": "90 Hours of Hell",
+    "original_air_time": 252352333,
+    "scheduled_start_time": 23525211
+}
+
+valid_ride_second = {
+    "description": "This is a test description",
+    "difficulty_estimate": 9.9,
+    "duration": 180,
+    "fitness_discipline_display_name": "Strength",
+    "image_url": "http://testdomain.com/image.png",
+    "instructor_id": "234TestID",
+    "title": "90 Hours of Hell",
+    "original_air_time": 252352355,
+    "scheduled_start_time": 23525211
+}
+
+valid_ride_third = {
+    "description": "This is a test description",
+    "difficulty_estimate": 9.9,
+    "duration": 180,
+    "fitness_discipline_display_name": "Yoga",
+    "image_url": "http://testdomain.com/image.png",
+    "instructor_id": "234TestID",
+    "title": "90 Hours of Hell",
+    "original_air_time": 252352300,
+    "scheduled_start_time": 23525211
+}
+
 invalid_ride = {
     "description": "This is a test description",
     "difficulty_estimate": 9.9,
@@ -47,7 +83,6 @@ def test_get_rides(client, test_ride):
 
 def test_successfully_add_ride_with_valid_data(
     client,
-    test_superuser,
     superuser_token_headers
 ):
     global valid_ride
@@ -56,7 +91,6 @@ def test_successfully_add_ride_with_valid_data(
         json=valid_ride,
         headers=superuser_token_headers
     )
-    ride_db = response.json()
     assert response.status_code == 201
 
 

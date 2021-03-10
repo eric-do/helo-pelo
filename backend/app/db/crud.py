@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import exists
+from sqlalchemy import exists, insert
 import requests
 import typing as t
 from . import models, schemas, helpers
@@ -92,10 +92,22 @@ def add_rides_from_peloton(
         create_ride(db, SimpleNamespace(**ride))
 
 
+def create_multiple_rides(
+    db: Session,
+    rides: t.List[schemas.RideIn]
+):
+    ids = []
+    for ride in rides:
+        ids.append(create_ride(db, SimpleNamespace(**ride)))
+    return ids
+
 def create_ride(
     db: Session,
     ride: schemas.RideIn
 ):
+    original_air_time_as_timestamp = helpers.convert_epoch_to_datetime(ride.original_air_time)
+    scheduled_start_time_as_timestamp = helpers.convert_epoch_to_datetime(ride.scheduled_start_time)
+    print(original_air_time_as_timestamp, scheduled_start_time_as_timestamp)
     ride_db = models.Ride(
         description=ride.description,
         difficulty_estimate=ride.difficulty_estimate,
@@ -104,8 +116,8 @@ def create_ride(
         image_url=ride.image_url,
         instructor_id=ride.instructor_id,
         title=ride.title,
-        original_air_time=helpers.convert_epoch_to_datetime(ride.original_air_time),
-        scheduled_start_time=helpers.convert_epoch_to_datetime(ride.scheduled_start_time)
+        original_air_time=original_air_time_as_timestamp,
+        scheduled_start_time=scheduled_start_time_as_timestamp
     )
     db.add(ride_db)
     db.commit()
@@ -127,7 +139,7 @@ def get_rides(
     limit: int=100,
     skip: int=0
 ):
-    return db.query(models.Ride).limit(limit).offset(skip).all()
+    return db.query(models.Ride).order_by(models.Ride.original_air_time.desc()).limit(limit).offset(skip).all()
 
 
 def add_comment_to_ride(

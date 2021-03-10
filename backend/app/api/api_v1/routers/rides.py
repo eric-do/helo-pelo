@@ -54,7 +54,7 @@ async def initialize_rides(
 
 @r.post(
     "/",
-    response_model=RideOut,
+    response_model=RideDB,
     response_model_exclude_none=True,
     status_code=status.HTTP_201_CREATED
 )
@@ -65,8 +65,6 @@ async def add_ride(
     db=Depends(get_db)
 ):
     ride = create_ride(db, ride)
-    ride.original_air_time = ride.original_air_time.timestamp()
-    ride.scheduled_start_time = ride.scheduled_start_time.timestamp()
     return ride
 
 @r.get(
@@ -92,7 +90,6 @@ async def get_ride(
     response: Response,
     ride_id: int,
     db=Depends(get_db),
-    response_model=RideOut
 ):
     ride = read_ride(db, ride_id)
     ride.original_air_time = ride.original_air_time.timestamp()
