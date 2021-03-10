@@ -37,7 +37,9 @@ type RideCardProps = {
   ride: Ride
 };
 
-const bodyFontColor = 'white';
+const primaryFontColor = 'white';
+const primaryBrandColor = blue[200];
+const secondaryBrandColor = red[200];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -62,39 +64,39 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center',
       fontWeight: 600,
       fontSize: 15,
-      color: bodyFontColor
+      color: primaryFontColor
     },
     cardSubheader: {
       textAlign: 'center',
-      color: bodyFontColor,
+      color: primaryFontColor,
       fontSize: 12
     },
     cardContent: {
       textAlign: 'left',
-      color: bodyFontColor,
+      color: primaryFontColor,
       marginBottom: 10
     },
     iconButton: {
-      color: blue[200],
+      color: primaryBrandColor,
       "&:hover, &.Mui-focusVisible": { backgroundColor: 'rgba(255,255,255,0.12)' }
     },
     icon: {
-      color: bodyFontColor
+      color: primaryFontColor
     },
     tagForm: {
       width: '100%',
       '& label.Mui-unfocused': {
-        color: bodyFontColor,
+        color: primaryFontColor,
       },
       '& label.Mui-focused': {
-        color: blue[200],
+        color: primaryBrandColor,
       },
       '& .MuiInput-underline:after': {
-        borderBottomColor: blue[200],
+        borderBottomColor: primaryBrandColor,
       },
     },
     formInput: {
-      color: bodyFontColor,
+      color: primaryFontColor,
     },
     tagContinaer: {
       display: 'flex',
@@ -102,7 +104,7 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'flex-start'
     },
     currentTag: {
-      backgroundColor: blue[200],
+      backgroundColor: primaryBrandColor,
       marginRight: 10,
       marginBottom: 10,
       '&:hover, &:focus': {
@@ -113,7 +115,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     badge: {
-      backgroundColor: red[200]
+      backgroundColor: secondaryBrandColor
     },
     addTag: {
       marginLeft: 5
@@ -124,13 +126,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     commentUser: {
       fontWeight: 600,
-      color: bodyFontColor
+      color: primaryFontColor
     },
     commentText: {
-      color: bodyFontColor
+      color: primaryFontColor
     },
     commentListFooter: {
-      color: bodyFontColor,
+      color: primaryFontColor,
       display: 'flex',
       justifyContent:'center',
       fontSize: 14,
@@ -219,11 +221,6 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
                 </Badge>
               ))
             }
-            <Chip
-              className={clsx(classes.currentTag, classes.addTag)}
-              label="Tag"
-              icon={<Add />}
-            />
           </Box>
           <Typography
             className={classes.cardContent}
