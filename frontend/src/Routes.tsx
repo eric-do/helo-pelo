@@ -2,10 +2,11 @@ import React, { FC } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
-
 import { Home, Login, SignUp, Protected, PrivateRoute } from './views';
 import { Admin } from './admin';
 import { logout } from './utils/auth';
+import RideList from './views/rides/RideList';
+import TopAppBar from './navigation/TopAppBar'
 
 const useStyles = makeStyles((theme) => ({
   app: {
@@ -34,6 +35,7 @@ export const Routes: FC = () => {
       </Route>
 
       <div className={classes.app}>
+        <TopAppBar />
         <header className={classes.header}>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
@@ -46,6 +48,7 @@ export const Routes: FC = () => {
             }}
           />
           <PrivateRoute path="/protected" component={Protected} />
+          <PrivateRoute path="/rides" component={RideList} />
           <Route exact path="/" component={Home} />
         </header>
       </div>

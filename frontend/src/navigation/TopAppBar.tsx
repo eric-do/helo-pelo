@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flexGrow: 1,
       width: "100%",
+      marginBottom: 60
     },
     appBar: {
       justifyContent: "space-between",

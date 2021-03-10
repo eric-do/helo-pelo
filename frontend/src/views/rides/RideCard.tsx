@@ -209,6 +209,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
                   overlap="circle"
                   badgeContent={tag.tag_count}
                   max={999}
+                  key={tag.tag.name}
                 >
                     <Chip
                       className={classes.currentTag}
@@ -255,9 +256,9 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
         ride.comments.length > 0 &&
         <List className={classes.commentList}>
           {
-            ride.comments.slice(0, commentCount).map(({ comment }) => (
+            ride.comments.slice(0, commentCount).map(({ comment }, i) => (
               <>
-                <ListItem >
+                <ListItem key={i}>
                   <ListItemText
                     primary={<Typography className={classes.commentUser}>User</Typography>}
                     secondary={<Typography className={classes.commentText}>{comment}</Typography>}
