@@ -159,7 +159,6 @@ def add_comment_to_ride(
     db.add(comment_db)
     db.commit()
     db.refresh(comment_db)
-    # comment_db.created_at = int(comment_db.created_at.timestamp())
     return comment_db
 
 
