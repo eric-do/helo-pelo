@@ -163,26 +163,6 @@ def add_comment_to_ride(
     return comment_db
 
 
-def xadd_multiple_tags_to_ride(
-    db: Session,
-    tags: t.List[str],
-    ride_id: int,
-    current_user: schemas.User
-):
-    unique_tags = set(tags)
-    ride_db: schemas.Ride = db.query(models.Ride).filter(models.Ride.id == ride_id).first()
-    for tag in unique_tags:
-        existing_db_tag = db.query(models.Tag).filter(models.Tag.name == tag).first()
-        if existing_db_tag:
-            existing_ride_tag = next((t for t in ride_db.tags if t.tag.name == tag), None)
-            if existing_ride_tag:
-                _update_ride_tag_association(db, ride_db, existing_db_tag)
-            else:
-                _create_new_ride_tag_association(db, ride_db, existing_tag=existing_db_tag)
-        else:
-            _create_new_ride_tag_association(db, ride_db, tag_name=tag)
-
-
 def create_tag(db, tag):
     tag_db = models.Tag(name=tag)
     db.add(tag_db)
@@ -203,9 +183,6 @@ def add_multiple_tags_to_ride(
     for tag in unique_tags:
         result = db.query(models.Tag).filter(models.Tag.name == tag).first()
         tag_db = result if result else create_tag(db, tag)
-        # assoc = models.RideTagAssociation(user=user_db, ride=ride_db, tag=tag_db)
-        # db.add(assoc)
-        # db.commit()
         stmt = insert(models.RideTagAssociation).values(
             user_id=user_db.id,
             ride_id=ride_db.id,
@@ -213,30 +190,3 @@ def add_multiple_tags_to_ride(
         db.execute(stmt)
         db.commit()
     return ride_db
-
-
-
-def _update_ride_tag_association(db, ride, tag) -> None:
-    '''Update exisiting ride/tag association
-
-    If a ride has already been tagged with a particular tag, the count of that
-    tag associated with the ride is simply incremented.
-    '''
-    association = db.query(models.RideTagAssociation).filter_by(
-        ride_id=ride.id,
-        tag_id=tag.id
-    ).first()
-    association.tag_count = association.tag_count + 1
-    db.commit()
-
-
-def _create_new_ride_tag_association(db, ride, tag_name=None, existing_tag=None):
-    '''Create a new ride/tag association
-
-    If a tag exists in the DB, it's used in the new association. Otherwise a new DB tag
-    is created and associated to the ride.
-    '''
-    association = models.RideTagAssociation()
-    association.tag = existing_tag if existing_tag else models.Tag(name=tag_name)
-    ride.tags.append(association)
-    db.commit()
