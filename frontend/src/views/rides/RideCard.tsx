@@ -147,11 +147,14 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const initialPlaceholder = 'Add tag(s)';
   const [placeholder, setPlaceholder] = useState<string>(initialPlaceholder);
   const [comment, setComment] = useState<string>('');
+  const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
   const [ride, setRide] = useState<Ride>(rideProp);
   const [error, setError] = useState<Error | null>(null);
-  const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
+
   const clearPlaceholder = () => setPlaceholder('');
   const resetPlaceholder = () => setPlaceholder(initialPlaceholder);
+
+  const clearComment = () => setComment('');
 
   const handleCommentInput = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -163,6 +166,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
       await addComment(ride.id, comment);
       const updatedRide = await getRide(ride.id);
       setRide(updatedRide);
+      clearComment();
     } catch(err) {
       if (err.response.status === 401) {
         setError(err)

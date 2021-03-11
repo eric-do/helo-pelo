@@ -54,7 +54,6 @@ class Tag(BaseModel):
 class RideTagAssociation(BaseModel):
     tag_id: int
     ride_id: int
-    tag_count: int
     tag: Tag
 
     class Config:

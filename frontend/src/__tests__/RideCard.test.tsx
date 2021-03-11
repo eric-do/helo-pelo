@@ -96,15 +96,13 @@ it('Renders rides with comments and tags correctly', () => {
   expect(ride.getByText(localTimeStamp)).toBeInTheDocument();
 
   rideWithCommentsAndTags.tags.forEach((tag, i) => {
-    const initialCount = 2;
-
     expect(ride.getByText(`#${tag.tag.name}`)).toBeInTheDocument();
   })
 
   rideWithCommentsAndTags.comments.forEach((comment, i) => {
     const initialCount = 2;
 
-    if (i < 2) {
+    if (i < initialCount) {
       expect(ride.getByText(comment.comment)).toBeInTheDocument();
     } else {
       expect(ride.queryByText(comment.comment)).not.toBeInTheDocument();

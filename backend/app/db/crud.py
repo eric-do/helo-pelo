@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import exists, insert
+from sqlalchemy import exists, exc
+from sqlalchemy.dialects.postgresql import insert
 import requests
 import typing as t
 from . import models, schemas, helpers
@@ -130,7 +131,8 @@ def read_ride(
     ride_id: int
 ):
     ride = db.query(models.Ride).filter_by(id=ride_id).first()
-    print(ride.comments)
+    if not ride:
+        raise HTTPException(status_code=404, detail="Ride not found")
     return ride
 
 
@@ -161,7 +163,7 @@ def add_comment_to_ride(
     return comment_db
 
 
-def add_multiple_tags_to_ride(
+def xadd_multiple_tags_to_ride(
     db: Session,
     tags: t.List[str],
     ride_id: int,
@@ -179,6 +181,39 @@ def add_multiple_tags_to_ride(
                 _create_new_ride_tag_association(db, ride_db, existing_tag=existing_db_tag)
         else:
             _create_new_ride_tag_association(db, ride_db, tag_name=tag)
+
+
+def create_tag(db, tag):
+    tag_db = models.Tag(name=tag)
+    db.add(tag_db)
+    db.commit()
+    db.refresh(tag_db)
+    return tag_db
+
+
+def add_multiple_tags_to_ride(
+    db: Session,
+    tags: t.List[str],
+    ride_id: int,
+    current_user: schemas.User
+):
+    unique_tags = set(tags)
+    user_db = get_user(db, current_user.id)
+    ride_db = read_ride(db, ride_id)
+    for tag in unique_tags:
+        result = db.query(models.Tag).filter(models.Tag.name == tag).first()
+        tag_db = result if result else create_tag(db, tag)
+        # assoc = models.RideTagAssociation(user=user_db, ride=ride_db, tag=tag_db)
+        # db.add(assoc)
+        # db.commit()
+        stmt = insert(models.RideTagAssociation).values(
+            user_id=user_db.id,
+            ride_id=ride_db.id,
+            tag_id=tag_db.id).on_conflict_do_nothing()
+        db.execute(stmt)
+        db.commit()
+    return ride_db
+
 
 
 def _update_ride_tag_association(db, ride, tag) -> None:

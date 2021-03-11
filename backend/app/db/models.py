@@ -6,7 +6,8 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     DateTime,
-    Table
+    Table,
+    UniqueConstraint
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -18,25 +19,33 @@ from .session import Base
 # )
 
 class RideTagAssociation(Base):
-    __tablename__ = 'ride_tag'
+    __tablename__ = 'user_ride_tags'
 
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     ride_id = Column(Integer, ForeignKey('ride.id'), primary_key=True)
     tag_id = Column(Integer, ForeignKey('tag.id'), primary_key=True)
-    tag_count = Column(Integer, default=1)
+
+    # __table_args__ = (UniqueConstraint(user_id, ride_id, tag_id),)
+
     ride = relationship("Ride", back_populates="tags")
     tag = relationship("Tag", back_populates="rides")
+    user = relationship("User", back_populates="tags")
 
 
 class User(Base):
     __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     email = Column(String, unique=True, index=True, nullable=False)
     username = Column(String)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     comments = relationship("Comment", back_populates="user")
+    tags = relationship(
+        "RideTagAssociation",
+        back_populates="user"
+    )
 
 
 class Instructor(Base):
@@ -72,7 +81,7 @@ class Comment(Base):
 class Ride(Base):
     __tablename__ = "ride"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     ride_id = Column(String, index=True, unique=True)
     description = Column(String)
     difficulty_estimate = Column(Float)
@@ -91,14 +100,13 @@ class Ride(Base):
     tags = relationship(
         "RideTagAssociation",
         back_populates="ride",
-        order_by=RideTagAssociation.tag_count.desc()
     )
 
 
 class Tag(Base):
     __tablename__ = "tag"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, index=True, unique=True)
     rides = relationship(
         "RideTagAssociation",
