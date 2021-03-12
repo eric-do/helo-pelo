@@ -93,22 +93,21 @@ const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
 
   return (
     <nav className={classes.drawer} aria-label="Site sections">
-
-        <Drawer
-          open={open}
-          BackdropProps={{ invisible: true }}
-          variant="permanent"
-          anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-          onClose={toggleDrawer(false)}
-          classes={{
-            paper: classes.drawerPaper
-          }}
-          ModalProps={{
-            keepMounted: true
-          }}
-        >
-          {drawer}
-        </Drawer>
+      <Drawer
+        open={open}
+        BackdropProps={{ invisible: true }}
+        variant="permanent"
+        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+        onClose={toggleDrawer(false)}
+        classes={{
+          paper: classes.drawerPaper
+        }}
+        ModalProps={{
+          keepMounted: true
+        }}
+      >
+        {drawer}
+      </Drawer>
     </nav>
   )
 }

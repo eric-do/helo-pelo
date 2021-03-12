@@ -6,8 +6,7 @@ import { Home, Login, SignUp, Protected, PrivateRoute } from './views';
 import { Admin } from './admin';
 import { logout } from './utils/auth';
 import RideList from './views/rides/RideList';
-import TopAppBar from './navigation/TopAppBar'
-import Drawer from './navigation/Drawer'
+import Navigation from './navigation/Navigation';
 
 const useStyles = makeStyles((theme) => ({
   app: {
@@ -28,20 +27,6 @@ const useStyles = makeStyles((theme) => ({
 export const Routes: FC = () => {
   const classes = useStyles();
   const history = useHistory();
-  const [showDrawer, setDrawer] = useState<boolean>(false)
-
-  const toggleDrawer = (open: boolean) => (
-    event: React.KeyboardEvent | React.MouseEvent
-  ) => {
-    if (
-      event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-         (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return;
-      }
-      setDrawer(open);
-  };
 
   return (
     <Switch>
@@ -50,9 +35,8 @@ export const Routes: FC = () => {
       </Route>
 
       <div className={classes.app}>
-        <TopAppBar toggleDrawer={toggleDrawer} isOpen={showDrawer}/>
-        <Drawer toggleDrawer={toggleDrawer} open={showDrawer} />
         <header className={classes.header}>
+          <Navigation />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
           <Route

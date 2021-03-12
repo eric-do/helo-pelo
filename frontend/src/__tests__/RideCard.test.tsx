@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import RideCard from '../views/rides/RideCard';
 // import { rideWithCommentsAndTags } from './data';
-import { getLocalStringFromTimeStamp } from '../utils/datetime'
+import { getLocalStringFromTimeStamp } from '../utils'
 import { Ride } from '../types';
 
 const rideWithCommentsAndTags: Ride = {

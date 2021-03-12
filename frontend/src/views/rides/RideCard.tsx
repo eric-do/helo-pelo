@@ -28,7 +28,7 @@ import {
   MoreVert,
   Add
 } from '@material-ui/icons';
-import { getLocalStringFromTimeStamp } from '../../utils/datetime'
+import { getLocalStringFromTimeStamp } from '../../utils'
 import { red, purple, blue } from '@material-ui/core/colors';
 import { getRide, addComment } from '../../utils/api';
 import { logout } from '../../utils/auth';
