@@ -30,7 +30,7 @@ import {
 } from '@material-ui/icons';
 import { getLocalStringFromTimeStamp } from '../../utils/datetime'
 import { red, purple, blue } from '@material-ui/core/colors';
-import { getRide, addComment } from '../../utils/api'
+import { getRide, addComment } from '../../utils/api';
 import { logout } from '../../utils/auth';
 
 type RideCardProps = {

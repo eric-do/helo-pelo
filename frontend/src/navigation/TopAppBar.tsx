@@ -21,7 +21,8 @@ const useStyles = makeStyles((theme: Theme) =>
     appBar: {
       justifyContent: "space-between",
       flexDirection: "row",
-      backgroundColor: '#303030'
+      backgroundColor: '#303030',
+      zIndex: 1400
     },
     toolBar: {
       width: "100%",
@@ -43,7 +44,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const TopAppBar: FC = props => {
+type AppBarProps = {
+  isOpen: boolean,
+  toggleDrawer: (toggle: boolean) => (
+    event: React.KeyboardEvent | React.MouseEvent
+  ) => void
+}
+
+const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
   const classes = useStyles();
   const authUrl = isAuthenticated() ? '/logout' : '/login';
   const authText = isAuthenticated() ? 'Logout' : 'Login';
@@ -56,7 +64,9 @@ const TopAppBar: FC = props => {
             edge="start"
             className={classes.menuButton}
             color="inherit"
-            aria-label="menu">
+            aria-label="menu"
+            onClick={toggleDrawer(!isOpen)}
+          >
             <Menu />
           </IconButton>
           <Box className={classes.titleContainer}>
