@@ -1,17 +1,11 @@
 import React from 'react';
 import {
-  AppBar,
-  CssBaseline,
   Divider,
   Drawer,
-  Hidden,
-  IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Toolbar,
-  Typography
 } from '@material-ui/core';
 import {
   Inbox,
@@ -52,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
-      backgroundColor: 'rgba(255,255,255,0.2)',
+      backgroundColor: '#2e2e2e',
       width: drawerWidth
     },
     content: {

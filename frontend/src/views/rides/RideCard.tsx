@@ -121,7 +121,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: 5
     },
     commentList: {
-      width: '95%',
+      width: '97%',
       backgroundColor: 'rgba(255,255,255,0.05)'
     },
     commentUser: {
@@ -136,7 +136,8 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       justifyContent:'center',
       fontSize: 14,
-      marginTop: 5
+      marginTop: 5,
+      cursor: 'pointer'
     }
   })
 );
@@ -272,8 +273,8 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
           }
           {
             commentCount < ride.comments.length &&
-            <Box className={classes.commentListFooter}>
-              <span onClick={loadMoreComments}>See more comments</span>
+            <Box className={classes.commentListFooter} onClick={loadMoreComments}>
+              <span>See more comments</span>
             </Box>
           }
           {
