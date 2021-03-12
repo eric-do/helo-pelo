@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { useContext } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -9,7 +9,8 @@ import {
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Menu } from '@material-ui/icons';
-import { isAuthenticated } from '../utils/auth';
+// import { isAuthenticated } from '../utils/auth';
+import { SessionContext } from '../SessionProvider';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -53,8 +54,9 @@ type AppBarProps = {
 
 const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
   const classes = useStyles();
-  const authUrl = isAuthenticated() ? '/logout' : '/login';
-  const authText = isAuthenticated() ? 'Logout' : 'Login';
+  const isAuthenticated = useContext(SessionContext);
+  const authUrl = isAuthenticated ? '/logout' : '/login';
+  const authText = isAuthenticated ? 'Logout' : 'Login';
 
   return (
     <div className={classes.root}>
