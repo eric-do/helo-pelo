@@ -1,9 +1,11 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useContext } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { getRides } from '../../utils/api';
 import type { Comment, Tag, Ride } from '../../types';
 import RideCard from './RideCard';
 import { Paper } from '@material-ui/core';
+import { SessionContext } from '../../SessionProvider';
+import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,6 +26,7 @@ const RideList: FC = () => {
   const [rides, setRides] = useState<Ride[]>([]);
   const [error, setError] = useState<string>('');
   const classes = useStyles();
+  const { isAuthenticated } = useContext(SessionContext);
 
   useEffect(() => {
     (async () => {

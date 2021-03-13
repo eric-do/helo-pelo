@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useContext } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import type { Ride, Tag, Comment } from '../../types';
 import clsx from 'clsx';
@@ -32,6 +32,7 @@ import { getLocalStringFromTimeStamp } from '../../utils'
 import { red, purple, blue } from '@material-ui/core/colors';
 import { getRide, addComment } from '../../utils/api';
 import { logout } from '../../utils/auth';
+import { SessionContext } from '../../SessionProvider';
 
 type RideCardProps = {
   ride: Ride
@@ -151,6 +152,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
   const [ride, setRide] = useState<Ride>(rideProp);
   const [error, setError] = useState<Error | null>(null);
+  const { updateAuthentication } = useContext(SessionContext);
 
   const clearPlaceholder = () => setPlaceholder('');
   const resetPlaceholder = () => setPlaceholder(initialPlaceholder);
@@ -170,7 +172,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
       clearComment();
     } catch(err) {
       if (err.response.status === 401) {
-        setError(err)
+        updateAuthentication()
         logout();
       }
     }

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useContext } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +7,7 @@ import { Admin } from './admin';
 import { logout } from './utils/auth';
 import RideList from './views/rides/RideList';
 import Navigation from './navigation/Navigation';
+import { SessionContext } from './SessionProvider';
 
 const useStyles = makeStyles((theme) => ({
   app: {
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 export const Routes: FC = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { isAuthenticated } = useContext(SessionContext);
 
   return (
     <Switch>
@@ -35,8 +37,8 @@ export const Routes: FC = () => {
       </Route>
 
       <div className={classes.app}>
+        { isAuthenticated && <Navigation /> }
         <header className={classes.header}>
-          <Navigation />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
           <Route
@@ -49,7 +51,7 @@ export const Routes: FC = () => {
           />
           <PrivateRoute path="/protected" component={Protected} />
           <PrivateRoute path="/rides" component={RideList} />
-          <Route exact path="/" component={Home} />
+          <PrivateRoute path="/" component={Home} />
         </header>
       </div>
     </Switch>

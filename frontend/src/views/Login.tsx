@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useContext } from 'react';
 import {
   Paper,
   Grid,
@@ -12,6 +12,7 @@ import { Face, Fingerprint } from '@material-ui/icons';
 import { Alert } from '@material-ui/lab';
 import { Redirect } from 'react-router-dom';
 import { useHistory } from 'react-router';
+import { SessionContext } from '../SessionProvider';
 
 import { login, isAuthenticated } from '../utils/auth';
 
@@ -36,6 +37,7 @@ export const Login: FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const { updateAuthentication } = useContext(SessionContext);
 
   const handleSubmit = async (_: React.MouseEvent) => {
     setError('');
@@ -44,6 +46,7 @@ export const Login: FC = () => {
 
       if (data) {
         history.push('/');
+        updateAuthentication()
       }
     } catch (err) {
       if (err instanceof Error) {

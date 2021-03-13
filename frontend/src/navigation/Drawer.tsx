@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Divider,
   Drawer,
@@ -18,6 +18,7 @@ import {
   Theme,
   createStyles
 } from '@material-ui/core/styles';
+import { SessionContext } from '../SessionProvider';
 
 const drawerWidth = 240;
 
@@ -66,6 +67,7 @@ type DrawerProps = {
 const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
   const classes = useStyles();
   const theme = useTheme();
+  const { isAuthenticated } = useContext(SessionContext);
 
   const drawer = (
     <div>
@@ -109,7 +111,7 @@ const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
         {drawer}
       </Drawer>
     </nav>
-  )
+  );
 }
 
 export default ResponsiveDrawer;

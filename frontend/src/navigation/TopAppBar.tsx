@@ -9,7 +9,6 @@ import {
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Menu } from '@material-ui/icons';
-// import { isAuthenticated } from '../utils/auth';
 import { SessionContext } from '../SessionProvider';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -54,7 +53,7 @@ type AppBarProps = {
 
 const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
   const classes = useStyles();
-  const isAuthenticated = useContext(SessionContext);
+  const { isAuthenticated } = useContext(SessionContext);
   const authUrl = isAuthenticated ? '/logout' : '/login';
   const authText = isAuthenticated ? 'Logout' : 'Login';
 
@@ -78,10 +77,7 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
               </Typography>
             </div>
           </Box>
-          <Button
-            color="inherit"
-            href={authUrl}
-          >
+          <Button color="inherit" href={authUrl}>
             {authText}
           </Button>
         </Toolbar>
