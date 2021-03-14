@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import exists, exc
+from sqlalchemy import exists, exc, func
 from sqlalchemy.dialects.postgresql import insert
 import requests
 import typing as t
@@ -143,6 +143,17 @@ def get_rides(
 ):
     return db.query(models.Ride).order_by(models.Ride.original_air_time.desc()).limit(limit).offset(skip).all()
 
+    # return db.query(models.Ride, models.Tag, models.RideTagAssociation).\
+    #           filter(
+    #               models.Ride.id===models.RideTagAssociation.ride_id,
+    #               models.Tag.id===models.RideTagAssociation.tag_id
+    #           )
+    # result = db.query(models.Ride, func.count(models.RideTagAssociation.tag_id)).\
+    #     join(models.RideTagAssociation).filter(models.RideTagAssociation.ride_id==models.Ride.id).\
+    #     join(models.Tag).filter(models.RideTagAssociation.tag_id==models.Tag.id).group_by(models.Ride.id, models.RideTagAssociation.tag_id).all()
+    # print(result)
+    # return result
+
 
 def add_comment_to_ride(
     db: Session,
@@ -150,7 +161,6 @@ def add_comment_to_ride(
     ride_id: int,
     current_user: schemas.User
 ):
-
     comment_db = models.Comment(
         comment=comment.comment,
         ride_id=ride_id,
@@ -160,6 +170,15 @@ def add_comment_to_ride(
     db.commit()
     db.refresh(comment_db)
     return comment_db
+
+
+def get_comments_for_ride(
+    db: Session,
+    ride_id: int
+):
+    return db.query(models.Comment).filter(
+        models.Comment.ride_id==ride_id
+    ).all()
 
 
 def create_tag(db, tag):
@@ -189,3 +208,21 @@ def add_multiple_tags_to_ride(
         db.execute(stmt)
         db.commit()
     return ride_db
+
+
+def get_tags_for_ride(
+    db: Session,
+    ride_id: int
+):
+    result = db.query(
+                    models.Tag.name.label("name"),
+                    func.count(models.Tag.name).label("tag_count")
+                ).\
+                select_from(models.Ride).\
+                join(models.RideTagAssociation).\
+                join(models.Tag).\
+                filter(models.Ride.id==ride_id).\
+                group_by(models.Ride.id, models.Tag.id).\
+                order_by(func.count(models.Tag.name).desc()).with_labels().\
+                all()
+    return [r._asdict() for r in result]

@@ -123,6 +123,7 @@ def test_superuser(test_db) -> models.User:
 
     user = models.User(
         email="fakeadmin@email.com",
+        username="test_user",
         hashed_password=get_password_hash(),
         is_superuser=True,
     )

@@ -7,6 +7,7 @@ def test_get_users(client, test_superuser, superuser_token_headers):
     assert response.json() == [
         {
             "id": test_superuser.id,
+            "username": test_superuser.username,
             "email": test_superuser.email,
             "is_active": test_superuser.is_active,
             "is_superuser": test_superuser.is_superuser,

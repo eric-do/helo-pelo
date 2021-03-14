@@ -142,7 +142,7 @@ def test_successfully_add_valid_comment_with_tags(
     comment_db = post_response.json()
     assert post_response.status_code == 200
     assert comment['comment'] == comment_db['comment']
-    assert comment_db['user_id'] == test_user.id
+    assert comment_db['user']['id'] == test_user.id
     assert ride_db["comments"][0]["comment"] == comment['comment']
     assert len(ride_db["tags"]) == original_tag_count + 2
     assert next((t for t in ride_db["tags"] if t["tag"]["name"] == "wow"), None) is not None
