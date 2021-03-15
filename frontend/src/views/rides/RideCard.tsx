@@ -1,4 +1,4 @@
-import React, { FC, useState, useContext } from 'react';
+import React, { FC, useState, useContext, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import type { Ride, Tag, Comment } from '../../types';
 import clsx from 'clsx';
@@ -21,16 +21,15 @@ import {
   ListItemText,
   Divider
 } from '@material-ui/core';
-import {
-  Favorite,
-  Share,
-  ExpandMore,
-  MoreVert,
-  Add
-} from '@material-ui/icons';
+import { MoreVert } from '@material-ui/icons';
 import { getLocalStringFromTimeStamp } from '../../utils'
 import { red, purple, blue } from '@material-ui/core/colors';
-import { getRide, addComment } from '../../utils/api';
+import {
+  getRide,
+  getRideComments,
+  getRideTags,
+  addComment,
+} from '../../utils/api';
 import { logout } from '../../utils/auth';
 import { SessionContext } from '../../SessionProvider';
 
@@ -144,12 +143,14 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const RideCard = ({ ride: rideProp }: RideCardProps) => {
+  const initialCommentCount = 2;
   const classes = useStyles();
-  const initialCommentCount = Math.min(rideProp.comments.length, 2);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const initialPlaceholder = 'Add tag(s)';
   const [placeholder, setPlaceholder] = useState<string>(initialPlaceholder);
   const [comment, setComment] = useState<string>('');
-  const [commentCount, setCommentCount] = useState<number>(initialCommentCount);
+  const [commentCount, setCommentCount] = useState<number>(0);
   const [ride, setRide] = useState<Ride>(rideProp);
   const [error, setError] = useState<Error | null>(null);
   const { updateAuthentication } = useContext(SessionContext);
@@ -183,6 +184,17 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
 
   const air_date = getLocalStringFromTimeStamp(ride.original_air_time)
 
+  useEffect(() => {
+    (async () => {
+      const commentsFromAPI = await getRideComments(ride.id);
+      const tagsFromAPI = await getRideTags(ride.id);
+
+      setComments(commentsFromAPI);
+      setCommentCount(Math.min(commentsFromAPI.length, 2));
+      setTags(tagsFromAPI);
+    })()
+  }, [])
+
   return(
     <Box className={classes.root}>
       <Card className={classes.rideCard}>
@@ -212,17 +224,17 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
         <CardContent>
           <Box className={classes.tagContinaer}>
             {
-              ride.tags.length > 0 && ride.tags.map(tag => (
+              tags.length > 0 && tags.map(tag => (
                 <Badge
                   classes={{badge: classes.badge}}
                   overlap="circle"
                   badgeContent={tag.tag_count}
                   max={999}
-                  key={tag.tag.name}
+                  key={tag.name}
                 >
                     <Chip
                       className={classes.currentTag}
-                      label={`#${tag.tag.name}`}
+                      label={`#${tag.name}`}
                       clickable
                     />
                 </Badge>
@@ -257,30 +269,30 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
         </CardContent>
       </Card>
       {
-        ride.comments.length > 0 &&
+        comments.length > 0 &&
         <List className={classes.commentList}>
           {
-            ride.comments.slice(0, commentCount).map(({ comment }, i) => (
-              <>
-                <ListItem key={i}>
+            comments.slice(0, commentCount).map((comment, i) => (
+              <div key={comment.id}>
+                <ListItem >
                   <ListItemText
-                    primary={<Typography className={classes.commentUser}>User</Typography>}
-                    secondary={<Typography className={classes.commentText}>{comment}</Typography>}
+                    primary={<Typography className={classes.commentUser}>{comment.user.username}</Typography>}
+                    secondary={<Typography className={classes.commentText}>{comment.comment}</Typography>}
                     onClick={() => console.log('hi')}
                   />
                 </ListItem>
                 <Divider component="li" />
-              </>
+              </div>
             ))
           }
           {
-            commentCount < ride.comments.length &&
+            commentCount < comments.length &&
             <Box className={classes.commentListFooter} onClick={loadMoreComments}>
               <span>See more comments</span>
             </Box>
           }
           {
-            commentCount >= ride.comments.length && commentCount > initialCommentCount &&
+            commentCount >= comments.length && commentCount > initialCommentCount &&
             <Box className={classes.commentListFooter}>
               <span onClick={resetComments}>Hide comments</span>
             </Box>

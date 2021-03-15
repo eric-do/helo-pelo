@@ -19,6 +19,18 @@ export const getRides = async () => {
   return rides;
 }
 
+export const getRideComments = async(ride_id: number) => {
+  const response = await fetch(`${BACKEND_URL}/rides/${ride_id}/comments`)
+  const comments = await response.json()
+  return comments
+}
+
+export const getRideTags = async(ride_id: number) => {
+  const response = await fetch(`${BACKEND_URL}/rides/${ride_id}/tags`)
+  const tags = await response.json()
+  return tags
+}
+
 export const getRide = async (ride_id: number) => {
   const response = await fetch(`${BACKEND_URL}/rides/${ride_id}`);
   const ride = await response.json();
@@ -27,17 +39,16 @@ export const getRide = async (ride_id: number) => {
 
 export const addComment = async (ride_id: number, comment: string) => {
   const token = localStorage.getItem('token');
-  console.log(token)
   const config = {
     headers: {
       Authorization: `Bearer ${token}`
     }
   }
   const data = { comment };
-
   await axios.post(
     `${BACKEND_URL}/rides/${ride_id}/comments`,
     data,
     config
   )
 }
+

@@ -13,10 +13,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .session import Base
 
-# ride_tag_association_table = Table('ride_tags', Base.metadata,
-#     Column('ride_id', Integer, ForeignKey('ride.id')),
-#     Column('tag_id', Integer, ForeignKey('tag.id'))
-# )
 
 class RideTagAssociation(Base):
     __tablename__ = 'user_ride_tags'
@@ -24,9 +20,6 @@ class RideTagAssociation(Base):
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     ride_id = Column(Integer, ForeignKey('ride.id'), primary_key=True)
     tag_id = Column(Integer, ForeignKey('tag.id'), primary_key=True)
-
-    # __table_args__ = (UniqueConstraint(user_id, ride_id, tag_id),)
-
     ride = relationship("Ride", back_populates="tags")
     tag = relationship("Tag", back_populates="rides")
     user = relationship("User", back_populates="tags")

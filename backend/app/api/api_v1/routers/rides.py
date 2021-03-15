@@ -16,7 +16,9 @@ from app.db.crud import (
     read_ride,
     get_rides as get_all_rides,
     add_comment_to_ride,
-    add_multiple_tags_to_ride
+    add_multiple_tags_to_ride,
+    get_tags_for_ride,
+    get_comments_for_ride
 )
 from app.db.schemas import (
     RideIn,
@@ -28,6 +30,7 @@ from app.db.schemas import (
 from app.db.helpers import parse_tags_from_text
 from app.core.auth import get_current_active_user, get_current_active_superuser
 from datetime import datetime
+from fastapi.encoders import jsonable_encoder
 
 rides_router = r = APIRouter()
 
@@ -81,6 +84,7 @@ async def get_rides(
 ):
     return get_all_rides(db, limit=limit, skip=skip)
 
+
 @r.get(
     "/{ride_id}",
     response_model=RideOut,
@@ -111,3 +115,28 @@ async def create_comment(
     tags = parse_tags_from_text(comment.comment)
     add_multiple_tags_to_ride(db, tags, ride_id, current_user)
     return comment
+
+
+@r.get(
+    "/{ride_id}/comments",
+    status_code=200,
+    response_model=t.List[CommentOut]
+)
+async def get_ride_comments(
+    response: Response,
+    ride_id: int,
+    db=Depends(get_db)
+):
+    return get_comments_for_ride(db, ride_id)
+
+
+@r.get(
+    "/{ride_id}/tags",
+    status_code=200
+)
+async def get_ride_tags(
+    response: Response,
+    ride_id: int,
+    db=Depends(get_db)
+):
+    return get_tags_for_ride(db, ride_id);

@@ -1,16 +1,22 @@
+export type User = {
+  id: number,
+  username: string,
+  email: string,
+  is_active: boolean,
+  is_superuser: boolean
+}
+
 export type Comment = {
+  id: number,
   comment: string,
   created_at: string,
-  user_id: number
+  user: User
 }
 
 export type Tag = {
-  tag_id: number,
-  ride_id: number,
   tag_count: number,
-  tag: {
-    name: string
-  }
+  name: string
+
 }
 
 export type Ride = {
@@ -25,6 +31,4 @@ export type Ride = {
   title: string
   original_air_time: string
   scheduled_start_time: string
-  comments: Comment[],
-  tags: Tag[]
 };

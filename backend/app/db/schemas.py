@@ -10,8 +10,10 @@ class UserBase(BaseModel):
 
 
 class UserOut(UserBase):
-    pass
+    id: int
 
+    class Config:
+        orm_mode = True
 
 class UserCreate(UserBase):
     password: str
@@ -46,7 +48,7 @@ class TokenData(BaseModel):
 
 class Tag(BaseModel):
     name: str
-
+    tag_count: int = 0
     class Config:
         orm_mode = True
 
@@ -65,8 +67,10 @@ class CommentIn(BaseModel):
 
 
 class CommentOut(CommentIn):
+    id: int
     created_at: datetime
-    user_id: int
+    comment: str
+    user: UserOut
 
     class Config:
         orm_mode = True
@@ -102,7 +106,5 @@ class RideDB(Ride):
     id: int
     original_air_time: datetime
     scheduled_start_time: datetime
-    comments: t.List[CommentOut]
-    tags: t.List[RideTagAssociation]
     class Config:
         orm_mode = True
