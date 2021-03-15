@@ -72,6 +72,7 @@ def test_get_rides(client, test_ride):
     response = client.get("/api/v1/rides/")
     rides = response.json()
     first_ride = rides[0]
+    assert response.status_code == 200
     assert len(rides) > 0
     assert "description" in first_ride
     assert "difficulty_estimate" in first_ride

@@ -30,7 +30,6 @@ from app.db.schemas import (
 from app.db.helpers import parse_tags_from_text
 from app.core.auth import get_current_active_user, get_current_active_superuser
 from datetime import datetime
-from fastapi.encoders import jsonable_encoder
 
 rides_router = r = APIRouter()
 

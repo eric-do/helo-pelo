@@ -257,7 +257,6 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
             <TextField
               className={classes.tagForm}
               color="secondary"
-              id="add-comment"
               onFocus={clearPlaceholder}
               onBlur={resetPlaceholder}
               placeholder={placeholder}
