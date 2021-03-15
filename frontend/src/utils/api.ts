@@ -45,7 +45,6 @@ export const addComment = async (ride_id: number, comment: string) => {
     }
   }
   const data = { comment };
-
   await axios.post(
     `${BACKEND_URL}/rides/${ride_id}/comments`,
     data,

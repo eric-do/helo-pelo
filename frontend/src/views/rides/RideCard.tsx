@@ -21,13 +21,7 @@ import {
   ListItemText,
   Divider
 } from '@material-ui/core';
-import {
-  Favorite,
-  Share,
-  ExpandMore,
-  MoreVert,
-  Add
-} from '@material-ui/icons';
+import { MoreVert } from '@material-ui/icons';
 import { getLocalStringFromTimeStamp } from '../../utils'
 import { red, purple, blue } from '@material-ui/core/colors';
 import {

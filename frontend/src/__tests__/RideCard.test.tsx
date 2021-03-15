@@ -7,7 +7,6 @@ import '@testing-library/jest-dom/extend-expect';
 import RideCard from '../views/rides/RideCard';
 import { getLocalStringFromTimeStamp } from '../utils';
 import { getRideComments, getRideTags } from '../utils/api';
-import nock from 'nock';
 import { Ride, Tag, Comment } from '../types';
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
@@ -71,15 +70,15 @@ const comments: Comment[] = [
 const tags: Tag[] = [
   {
     "name": "britney",
-    "tag_count": 2
+    "tag_count": 541
   },
   {
     "name": "awesome",
-    "tag_count": 1
+    "tag_count": 234
   },
   {
     "name": "test",
-    "tag_count": 1
+    "tag_count": 67
   }
 ]
 
@@ -97,7 +96,7 @@ beforeAll(() => server.listen());
 afterAll(() => server.resetHandlers());
 afterAll(() => server.close());
 
-it('Renders rides with comments and tags correctly', async () => {
+it('should render rides with comments and tags correctly', async () => {
   const ride = render(<RideCard ride={validRide}/>);
   const localTimeStamp = getLocalStringFromTimeStamp(validRide.original_air_time);
 
@@ -108,7 +107,8 @@ it('Renders rides with comments and tags correctly', async () => {
   expect(ride.getByText(localTimeStamp)).toBeInTheDocument();
 
   tags.forEach((tag, i) => {
-    expect(screen.getByText(`#${tag.name}`)).toBeInTheDocument();
+    expect(ride.getByText(`#${tag.name}`)).toBeInTheDocument();
+    expect(ride.getByText(`${tag.tag_count}`)).toBeInTheDocument();
   })
 
   comments.forEach((comment, i) => {
@@ -125,7 +125,7 @@ it('Renders rides with comments and tags correctly', async () => {
   expect(ride.getByText('See more comments')).toBeInTheDocument();
 });
 
-it('Does not display "See more coments" if there are no comments', () => {
+it('should not display "See more coments" if there are no comments', () => {
   server.use(
     rest.get(`${BACKEND_URL}/rides/10/comments`, (req, res, ctx) => {
       return res(ctx.json(comments))
@@ -135,3 +135,24 @@ it('Does not display "See more coments" if there are no comments', () => {
 
   expect(ride.queryByText('See more comments')).not.toBeInTheDocument();
 });
+
+it('should accept input in the comment field', async () => {
+  const comment =  {
+      "comment": "Test comment with #hashtag",
+      "id": 44,
+      "created_at": "2021-03-09T21:20:29.035720",
+      "user": {
+        "id": 2,
+        "username": "test_user1",
+        "email": "user1@mail.com",
+        "is_active": true,
+        "is_superuser": true
+      }
+    };
+
+  const ride = render(<RideCard ride={validRide}/>);
+  const input = ride.getByPlaceholderText('Add tag(s)') as HTMLInputElement;
+
+  fireEvent.change(input, { target: { value: comment.comment }});
+  expect(input.value).toBe(comment.comment);
+})
