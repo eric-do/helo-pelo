@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React from 'react';
+import type { FC } from 'react';
 import {
   Create,
   SimpleForm,
@@ -7,7 +8,9 @@ import {
   BooleanInput,
 } from 'react-admin';
 
+// eslint-disable-next-line import/prefer-default-export
 export const UserCreate: FC = (props) => (
+  // eslint-disable-next-line react/jsx-props-no-spreading
   <Create {...props}>
     <SimpleForm>
       <TextInput source="email" />

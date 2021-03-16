@@ -1,7 +1,8 @@
-import React, { FC } from 'react';
-import { Routes } from './Routes';
-import ThemeProvider from './ThemeProvider';
+import React from 'react';
+import type { FC } from 'react';
 import { useTheme } from '@material-ui/core/styles';
+import Routes from './Routes';
+import ThemeProvider from './ThemeProvider';
 import { SessionProvider } from './SessionProvider';
 
 const App: FC = () => {
@@ -14,7 +15,6 @@ const App: FC = () => {
       </SessionProvider>
     </ThemeProvider>
   );
-}
-
+};
 
 export default App;

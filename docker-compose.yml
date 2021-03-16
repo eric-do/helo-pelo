@@ -32,10 +32,10 @@ services:
       dockerfile: Dockerfile
     command: celery --app app.tasks worker --loglevel=DEBUG -Q main-queue -c 1
 
-  flower:  
+  flower:
     image: mher/flower
     command: flower --broker=redis://redis:6379/0 --port=5555
-    ports:  
+    ports:
         - 5555:5555
     depends_on:
       - "redis"

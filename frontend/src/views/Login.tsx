@@ -46,7 +46,7 @@ export const Login: FC = () => {
 
       if (data) {
         history.push('/');
-        updateAuthentication()
+        updateAuthentication();
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -68,7 +68,7 @@ export const Login: FC = () => {
           <Grid item>
             <Face />
           </Grid>
-          <Grid item md={true} sm={true} xs={true}>
+          <Grid item md sm xs>
             <TextField
               id="email"
               label="Email"
@@ -87,7 +87,7 @@ export const Login: FC = () => {
           <Grid item>
             <Fingerprint />
           </Grid>
-          <Grid item md={true} sm={true} xs={true}>
+          <Grid item md sm xs>
             <TextField
               id="password"
               label="Password"

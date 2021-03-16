@@ -8,6 +8,7 @@ import {
 } from 'react-admin';
 
 export const UserEdit: FC = (props) => (
+  // eslint-disable-next-line react/jsx-props-no-spreading
   <Edit {...props}>
     <SimpleForm>
       <TextInput disabled source="id" />

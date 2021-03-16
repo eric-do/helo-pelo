@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Divider,
   Drawer,
@@ -7,18 +7,13 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@material-ui/core';
-import {
-  Inbox,
-  Menu,
-  Mail
-} from '@material-ui/icons';
+import { Inbox } from '@material-ui/icons';
 import {
   makeStyles,
   useTheme,
   Theme,
-  createStyles
+  createStyles,
 } from '@material-ui/core/styles';
-import { SessionContext } from '../SessionProvider';
 
 const drawerWidth = 240;
 
@@ -31,13 +26,13 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         width: drawerWidth,
         flexShrink: 0,
-      }
+      },
     },
     appBar: {
       [theme.breakpoints.up('sm')]: {
         width: `calc(100% - ${drawerWidth}px)`,
-        marginLeft: drawerWidth
-      }
+        marginLeft: drawerWidth,
+      },
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -48,50 +43,53 @@ const useStyles = makeStyles((theme: Theme) =>
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
       backgroundColor: '#2e2e2e',
-      width: drawerWidth
+      width: drawerWidth,
     },
     content: {
       flexGrow: 1,
-      padding: theme.spacing(3)
-    }
+      padding: theme.spacing(3),
+    },
   })
-)
+);
 
 type DrawerProps = {
-  open: boolean,
-  toggleDrawer: (toggle: boolean) => (
-    event: React.KeyboardEvent | React.MouseEvent
-  ) => void
-}
+  open: boolean;
+  toggleDrawer: (
+    toggle: boolean
+  ) => (event: React.KeyboardEvent | React.MouseEvent) => void;
+};
 
 const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
   const classes = useStyles();
   const theme = useTheme();
-  const { isAuthenticated } = useContext(SessionContext);
 
   const drawer = (
     <div>
-      <div className={classes.toolbar}/>
+      <div className={classes.toolbar} />
       <Divider />
       <List>
-        {['Tagged Rides', 'Email', 'Test'].map((text, index) => (
+        {['Tagged Rides', 'Email', 'Test'].map((text) => (
           <ListItem button key={text}>
-            <ListItemIcon><Inbox /></ListItemIcon>
+            <ListItemIcon>
+              <Inbox />
+            </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>
       <Divider />
       <List>
-        {['Tagged Rides', 'Email', 'Test'].map((text, index) => (
+        {['Tagged Rides', 'Email', 'Test'].map((text) => (
           <ListItem button key={text}>
-            <ListItemIcon><Inbox /></ListItemIcon>
+            <ListItemIcon>
+              <Inbox />
+            </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>
     </div>
-  )
+  );
 
   return (
     <nav className={classes.drawer} aria-label="Site sections">
@@ -102,16 +100,16 @@ const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
         anchor={theme.direction === 'rtl' ? 'right' : 'left'}
         onClose={toggleDrawer(false)}
         classes={{
-          paper: classes.drawerPaper
+          paper: classes.drawerPaper,
         }}
         ModalProps={{
-          keepMounted: true
+          keepMounted: true,
         }}
       >
         {drawer}
       </Drawer>
     </nav>
   );
-}
+};
 
 export default ResponsiveDrawer;

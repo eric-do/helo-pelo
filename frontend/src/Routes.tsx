@@ -1,4 +1,5 @@
-import React, { FC, useContext } from 'react';
+import React, { useContext } from 'react';
+import type { FC } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,7 +10,7 @@ import RideList from './views/rides/RideList';
 import Navigation from './navigation/Navigation';
 import { SessionContext } from './SessionProvider';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   app: {
     textAlign: 'center',
   },
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Routes: FC = () => {
+const Routes: FC = () => {
   const classes = useStyles();
   const history = useHistory();
   const { isAuthenticated } = useContext(SessionContext);
@@ -37,7 +38,7 @@ export const Routes: FC = () => {
       </Route>
 
       <div className={classes.app}>
-        { isAuthenticated && <Navigation /> }
+        {isAuthenticated && <Navigation />}
         <header className={classes.header}>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
@@ -57,3 +58,5 @@ export const Routes: FC = () => {
     </Switch>
   );
 };
+
+export default Routes;

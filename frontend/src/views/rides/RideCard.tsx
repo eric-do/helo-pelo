@@ -1,6 +1,5 @@
 import React, { FC, useState, useContext, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import type { Ride, Tag, Comment } from '../../types';
 import clsx from 'clsx';
 import {
   Card,
@@ -19,11 +18,12 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider
+  Divider,
 } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
-import { getLocalStringFromTimeStamp } from '../../utils'
 import { red, purple, blue } from '@material-ui/core/colors';
+import { getLocalStringFromTimeStamp } from '../../utils';
+import type { Ride, Tag, Comment } from '../../types';
 import {
   getRide,
   getRideComments,
@@ -34,7 +34,7 @@ import { logout } from '../../utils/auth';
 import { SessionContext } from '../../SessionProvider';
 
 type RideCardProps = {
-  ride: Ride
+  ride: Ride;
 };
 
 const primaryFontColor = 'white';
@@ -46,42 +46,44 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     rideCard: {
-      width: "100%",
+      width: '100%',
       marginTop: 20,
-      backgroundColor: 'rgba(255,255,255,0.05)'
+      backgroundColor: 'rgba(255,255,255,0.05)',
     },
     avatar: {
-      backgroundColor: red[500]
+      backgroundColor: red[500],
     },
     media: {
       height: 0,
-      paddingTop: '56.25%'
+      paddingTop: '56.25%',
     },
     cardHeader: {
       textAlign: 'center',
       fontWeight: 600,
       fontSize: 15,
-      color: primaryFontColor
+      color: primaryFontColor,
     },
     cardSubheader: {
       textAlign: 'center',
       color: primaryFontColor,
-      fontSize: 12
+      fontSize: 12,
     },
     cardContent: {
       textAlign: 'left',
       color: primaryFontColor,
-      marginBottom: 10
+      marginBottom: 10,
     },
     iconButton: {
       color: primaryBrandColor,
-      "&:hover, &.Mui-focusVisible": { backgroundColor: 'rgba(255,255,255,0.12)' }
+      '&:hover, &.Mui-focusVisible': {
+        backgroundColor: 'rgba(255,255,255,0.12)',
+      },
     },
     icon: {
-      color: primaryFontColor
+      color: primaryFontColor,
     },
     tagForm: {
       width: '100%',
@@ -101,7 +103,7 @@ const useStyles = makeStyles((theme: Theme) =>
     tagContinaer: {
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'flex-start'
+      justifyContent: 'flex-start',
     },
     currentTag: {
       backgroundColor: primaryBrandColor,
@@ -115,45 +117,48 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     badge: {
-      backgroundColor: secondaryBrandColor
+      backgroundColor: secondaryBrandColor,
     },
     addTag: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     commentList: {
       width: '97%',
-      backgroundColor: 'rgba(255,255,255,0.05)'
+      backgroundColor: 'rgba(255,255,255,0.05)',
     },
     commentUser: {
       fontWeight: 600,
-      color: primaryFontColor
+      color: primaryFontColor,
     },
     commentText: {
-      color: primaryFontColor
+      color: primaryFontColor,
     },
     commentListFooter: {
       color: primaryFontColor,
       display: 'flex',
-      justifyContent:'center',
+      justifyContent: 'center',
       fontSize: 14,
       marginTop: 5,
-      cursor: 'pointer'
-    }
+      cursor: 'pointer',
+    },
   })
 );
 
 const useInput = (initialState: string = '') => {
   const [state, setState] = useState(initialState);
 
-  const handlers = React.useMemo(() => ({
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      setState(e.target.value)
-    },
-    resetInput: () => setState(initialState)
-  }), [initialState])
+  const handlers = React.useMemo(
+    () => ({
+      handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        setState(e.target.value);
+      },
+      resetInput: () => setState(initialState),
+    }),
+    [initialState]
+  );
 
-  return [state, handlers]
-}
+  return [state, handlers];
+};
 
 const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const initialCommentCount = 2;
@@ -173,9 +178,8 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
 
   const clearComment = () => setComment('');
 
-  const handleCommentInput = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => setComment(event.target.value);
+  const handleCommentInput = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setComment(event.target.value);
 
   const handleCommentSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -184,18 +188,18 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
       const updatedRide = await getRide(ride.id);
       setRide(updatedRide);
       clearComment();
-    } catch(err) {
+    } catch (err) {
       if (err.response.status === 401) {
-        updateAuthentication()
+        updateAuthentication();
         logout();
       }
     }
-  }
+  };
 
   const loadMoreComments = () => setCommentCount(commentCount + 5);
   const resetComments = () => setCommentCount(initialCommentCount);
 
-  const air_date = getLocalStringFromTimeStamp(ride.original_air_time)
+  const airDate = getLocalStringFromTimeStamp(ride.original_air_time);
 
   useEffect(() => {
     (async () => {
@@ -205,29 +209,30 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
       setComments(commentsFromAPI);
       setCommentCount(Math.min(commentsFromAPI.length, 2));
       setTags(tagsFromAPI);
-    })()
-  }, [])
+    })();
+  }, []);
 
-  return(
+  return (
     <Box className={classes.root}>
       <Card className={classes.rideCard}>
         <CardHeader
           className={classes.cardHeader}
           avatar={
-            <Avatar
-              aria-label="instructor-image"
-              className={classes.avatar}
-            >
+            <Avatar aria-label="instructor-image" className={classes.avatar}>
               E
             </Avatar>
           }
           action={
             <IconButton className={classes.iconButton} aria-label="settings">
-              <MoreVert className={classes.icon}/>
+              <MoreVert className={classes.icon} />
             </IconButton>
           }
-          title={<Typography className={classes.cardHeader}>{ride.title}</Typography>}
-          subheader={<Typography className={classes.cardSubheader}>{air_date}</Typography>}
+          title={
+            <Typography className={classes.cardHeader}>{ride.title}</Typography>
+          }
+          subheader={
+            <Typography className={classes.cardSubheader}>{airDate}</Typography>
+          }
         />
         <CardMedia
           className={classes.media}
@@ -236,23 +241,22 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
         />
         <CardContent>
           <Box className={classes.tagContinaer}>
-            {
-              tags.length > 0 && tags.map(tag => (
+            {tags.length > 0 &&
+              tags.map((tag) => (
                 <Badge
-                  classes={{badge: classes.badge}}
+                  classes={{ badge: classes.badge }}
                   overlap="circle"
                   badgeContent={tag.tag_count}
                   max={999}
                   key={tag.name}
                 >
-                    <Chip
-                      className={classes.currentTag}
-                      label={`#${tag.name}`}
-                      clickable
-                    />
+                  <Chip
+                    className={classes.currentTag}
+                    label={`#${tag.name}`}
+                    clickable
+                  />
                 </Badge>
-              ))
-            }
+              ))}
           </Box>
           <Typography
             className={classes.cardContent}
@@ -262,11 +266,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
           >
             {ride.description}
           </Typography>
-          <form
-            noValidate
-            autoComplete="off"
-            onSubmit={handleCommentSubmit}
-          >
+          <form noValidate autoComplete="off" onSubmit={handleCommentSubmit}>
             <TextField
               className={classes.tagForm}
               color="secondary"
@@ -280,39 +280,46 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
           </form>
         </CardContent>
       </Card>
-      {
-        comments.length > 0 &&
+      {comments.length > 0 && (
         <List className={classes.commentList}>
-          {
-            comments.slice(0, commentCount).map((comment, i) => (
-              <div key={comment.id}>
-                <ListItem >
-                  <ListItemText
-                    primary={<Typography className={classes.commentUser}>{comment.user.username}</Typography>}
-                    secondary={<Typography className={classes.commentText}>{comment.comment}</Typography>}
-                    onClick={() => console.log('hi')}
-                  />
-                </ListItem>
-                <Divider component="li" />
-              </div>
-            ))
-          }
-          {
-            commentCount < comments.length &&
-            <Box className={classes.commentListFooter} onClick={loadMoreComments}>
+          {comments.slice(0, commentCount).map((comment, i) => (
+            <div key={comment.id}>
+              <ListItem>
+                <ListItemText
+                  primary={
+                    <Typography className={classes.commentUser}>
+                      {comment.user.username}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography className={classes.commentText}>
+                      {comment.comment}
+                    </Typography>
+                  }
+                  onClick={() => console.log('hi')}
+                />
+              </ListItem>
+              <Divider component="li" />
+            </div>
+          ))}
+          {commentCount < comments.length && (
+            <Box
+              className={classes.commentListFooter}
+              onClick={loadMoreComments}
+            >
               <span>See more comments</span>
             </Box>
-          }
-          {
-            commentCount >= comments.length && commentCount > initialCommentCount &&
-            <Box className={classes.commentListFooter}>
-              <span onClick={resetComments}>Hide comments</span>
-            </Box>
-          }
+          )}
+          {commentCount >= comments.length &&
+            commentCount > initialCommentCount && (
+              <Box className={classes.commentListFooter}>
+                <span onClick={resetComments}>Hide comments</span>
+              </Box>
+            )}
         </List>
-      }
+      )}
     </Box>
   );
-}
+};
 
 export default RideCard;

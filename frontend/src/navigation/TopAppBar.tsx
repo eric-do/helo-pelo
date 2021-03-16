@@ -12,40 +12,43 @@ import {
   ListItem,
   ListItemText,
   MenuList,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
-import { createStyles, makeStyles, Theme, fade } from '@material-ui/core/styles';
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  fade,
+} from '@material-ui/core/styles';
 import { Menu, Search } from '@material-ui/icons';
 import { SessionContext } from '../SessionProvider';
-import {
-  debounce,
-  getTags
-} from '../utils/api';
+import { debounce, getTags } from '../utils/api';
 import type { Tag } from '../types';
+import AutoCompleteSearch from './AutoCompleteSearch';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
-      width: "100%",
-      marginBottom: 60
+      width: '100%',
+      marginBottom: 60,
     },
     appBar: {
-      justifyContent: "space-between",
-      flexDirection: "row",
+      justifyContent: 'space-between',
+      flexDirection: 'row',
       backgroundColor: '#303030',
-      zIndex: 1400
+      zIndex: 1400,
     },
     toolBar: {
-      width: "100%",
-      justifyContent: "space-between",
-      flexDirection: "row"
+      width: '100%',
+      justifyContent: 'space-between',
+      flexDirection: 'row',
     },
     titleContainer: {
-      width: "100%",
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "flex-start",
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
     },
     title: {
       flexGrow: 1,
@@ -54,7 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     menuButton: {
-      marginRight: theme.spacing(2)
+      marginRight: theme.spacing(2),
     },
     search: {
       position: 'relative',
@@ -93,31 +96,24 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     userOptions: {
-      marginLeft: theme.spacing(5)
+      marginLeft: theme.spacing(5),
     },
-    popover: {
-    },
-    tagList: {
-
-    },
+    popover: {},
+    tagList: {},
     tagContainer: {
-      alignItems: 'flex-start'
+      alignItems: 'flex-start',
     },
-    tagName: {
-
-    },
-    tagCount: {
-
-    }
+    tagName: {},
+    tagCount: {},
   })
 );
 
 type AppBarProps = {
-  isOpen: boolean,
-  toggleDrawer: (toggle: boolean) => (
-    event: React.KeyboardEvent | React.MouseEvent
-  ) => void
-}
+  isOpen: boolean;
+  toggleDrawer: (
+    toggle: boolean
+  ) => (event: React.KeyboardEvent | React.MouseEvent) => void;
+};
 
 const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
   const classes = useStyles();
@@ -125,36 +121,36 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
   // AUTHENTICATION DISPLAY
   const { isAuthenticated } = useContext(SessionContext);
   const auth = isAuthenticated
-               ? { path: '/logout', text: 'Logout' }
-               : { path: '/login', text: 'Login' }
+    ? { path: '/logout', text: 'Logout' }
+    : { path: '/login', text: 'Login' };
 
   // SEARCH HANDLING
   let appBarRef: HTMLDivElement | null = null;
   const [tags, setTags] = useState<Tag[]>([]);
   const [search, setSearch] = useState('');
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-  const setAppBarRef = (element: HTMLDivElement) => appBarRef = element;
+  const setAppBarRef = (element: HTMLDivElement) => {
+    appBarRef = element;
+  };
 
   const blurTextInput = () => {
     if (appBarRef) {
       setAnchorEl(null);
     }
-  }
+  };
 
-  const handleSearchInput = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const search = e.target.value;
-    const cleanedSearch = search.replace(/\s/g, '')
+  const handleSearchInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    const cleanedSearch = input.replace(/\s/g, '');
     setSearch(cleanedSearch);
     setAnchorEl(e.currentTarget);
-    if (search !== '') {
-      const tags = await getTags(cleanedSearch);
-      setTags(tags);
+    if (input !== '') {
+      const matchingTags = await getTags(cleanedSearch);
+      setTags(matchingTags);
     } else {
       setAnchorEl(null);
     }
-  }
+  };
 
   // DRAWER LOGIC
   const open = Boolean(anchorEl);
@@ -176,7 +172,7 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
           <Box className={classes.titleContainer}>
             <div>
               <Typography variant="h6" className={classes.title}>
-              TEST
+                TEST
               </Typography>
             </div>
           </Box>
@@ -197,9 +193,9 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
               open={open}
               anchorEl={anchorEl}
               onClose={blurTextInput}
-              disablePortal={true}
-              disableAutoFocus={true}
-              disableEnforceFocus={true}
+              disablePortal
+              disableAutoFocus
+              disableEnforceFocus
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',
@@ -210,29 +206,30 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
               }}
             >
               <MenuList>
-                {
-                  tags.length > 0 && tags.map(tag => (
+                {tags.length > 0 &&
+                  tags.map((tag) => (
                     <MenuItem className={classes.tagContainer} key={tag.name}>
                       <ListItemText
                         primary={tag.name}
                         secondary={`${tag.tag_count} rides`}
                       />
                     </MenuItem>
-                  ))
-                }
-                {
-                  tags.length === 0 && <ListItem>No results</ListItem>
-                }
+                  ))}
+                {tags.length === 0 && <ListItem>No results</ListItem>}
               </MenuList>
             </Popover>
           </div>
-          <Button className={classes.userOptions} color="inherit" href={auth.path}>
+          <Button
+            className={classes.userOptions}
+            color="inherit"
+            href={auth.path}
+          >
             {auth.text}
           </Button>
         </Toolbar>
       </AppBar>
     </div>
-  )
-}
+  );
+};
 
 export default TopAppBar;
