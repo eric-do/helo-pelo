@@ -1,6 +1,15 @@
 import { BACKEND_URL } from '../config';
 import axios from 'axios';
 
+export const debounce = <T extends Function>(cb: T, wait = 250) => {
+  let h: number = 0;
+  let callable = (...args: any) => {
+      clearTimeout(h);
+      h = setTimeout(() => cb(...args), wait) as unknown as number;
+  };
+  return <T>(<any>callable);
+}
+
 export const getMessage = async () => {
   const response = await fetch(BACKEND_URL);
 
@@ -50,5 +59,10 @@ export const addComment = async (ride_id: number, comment: string) => {
     data,
     config
   )
+}
+
+export const getTags = async (query: string = '') => {
+  const { data } = await axios.get(`${BACKEND_URL}/tags/`, { params: { query } });
+  return data;
 }
 

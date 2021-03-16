@@ -142,6 +142,19 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const useInput = (initialState: string = '') => {
+  const [state, setState] = useState(initialState);
+
+  const handlers = React.useMemo(() => ({
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+      setState(e.target.value)
+    },
+    resetInput: () => setState(initialState)
+  }), [initialState])
+
+  return [state, handlers]
+}
+
 const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const initialCommentCount = 2;
   const classes = useStyles();

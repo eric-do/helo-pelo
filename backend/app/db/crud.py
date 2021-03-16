@@ -233,7 +233,7 @@ def get_tag_counts(
     tag: str,
     limit: int=10
 ):
-    search = '%{0}%'.format(tag)
+    search = '{0}%'.format(tag)
     print('test')
     result = db.query(
         models.Tag.name.label("name"),

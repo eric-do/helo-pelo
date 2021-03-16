@@ -6,11 +6,22 @@ import {
   Button,
   IconButton,
   Box,
-  InputBase
+  InputBase,
+  Popover,
+  List,
+  ListItem,
+  ListItemText,
+  MenuList,
+  MenuItem
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme, fade } from '@material-ui/core/styles';
 import { Menu, Search } from '@material-ui/icons';
 import { SessionContext } from '../SessionProvider';
+import {
+  debounce,
+  getTags
+} from '../utils/api';
+import type { Tag } from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,6 +94,20 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     userOptions: {
       marginLeft: theme.spacing(5)
+    },
+    popover: {
+    },
+    tagList: {
+
+    },
+    tagContainer: {
+      alignItems: 'flex-start'
+    },
+    tagName: {
+
+    },
+    tagCount: {
+
     }
   })
 );
@@ -94,38 +119,50 @@ type AppBarProps = {
   ) => void
 }
 
-type Search = {
-  text: string,
-  tags: string[]
-  words: string[]
-};
-
 const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
   const classes = useStyles();
-  const { isAuthenticated } = useContext(SessionContext);
-  const authUrl = isAuthenticated ? '/logout' : '/login';
-  const authText = isAuthenticated ? 'Logout' : 'Login';
-  const [search, setSearch] = useState<Search>({ text: '', tags: [], words: []});
 
-  const handleSearchInput = (
+  // AUTHENTICATION DISPLAY
+  const { isAuthenticated } = useContext(SessionContext);
+  const auth = isAuthenticated
+               ? { path: '/logout', text: 'Logout' }
+               : { path: '/login', text: 'Login' }
+
+  // SEARCH HANDLING
+  let appBarRef: HTMLDivElement | null = null;
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [search, setSearch] = useState('');
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+  const setAppBarRef = (element: HTMLDivElement) => appBarRef = element;
+
+  const blurTextInput = () => {
+    if (appBarRef) {
+      setAnchorEl(null);
+    }
+  }
+
+  const handleSearchInput = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const text = e.target.value;
-    const tags = [] as string[];
-    const words = [] as string[];
-    text.split(' ').forEach(word => {
-      if (word[0] === '#') {
-        tags.push(word.slice(1));
-      } else {
-        words.push(word);
-      }
-    })
-    setSearch({ text, tags, words });
+    const search = e.target.value;
+    const cleanedSearch = search.replace(/\s/g, '')
+    setSearch(cleanedSearch);
+    setAnchorEl(e.currentTarget);
+    if (search !== '') {
+      const tags = await getTags(cleanedSearch);
+      setTags(tags);
+    } else {
+      setAnchorEl(null);
+    }
   }
+
+  // DRAWER LOGIC
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   return (
     <div className={classes.root}>
-      <AppBar className={classes.appBar} position="fixed">
+      <AppBar className={classes.appBar} position="fixed" ref={setAppBarRef}>
         <Toolbar className={classes.toolBar}>
           <IconButton
             edge="start"
@@ -149,14 +186,48 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
             </div>
             <InputBase
               placeholder="Search..."
-              value={search.text}
+              value={search}
               onChange={handleSearchInput}
               classes={{ input: classes.inputInput }}
               inputProps={{ 'aria-label': 'search' }}
             />
+            <Popover
+              id={id}
+              className={classes.popover}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={blurTextInput}
+              disablePortal={true}
+              disableAutoFocus={true}
+              disableEnforceFocus={true}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+            >
+              <MenuList>
+                {
+                  tags.length > 0 && tags.map(tag => (
+                    <MenuItem className={classes.tagContainer} key={tag.name}>
+                      <ListItemText
+                        primary={tag.name}
+                        secondary={`${tag.tag_count} rides`}
+                      />
+                    </MenuItem>
+                  ))
+                }
+                {
+                  tags.length === 0 && <ListItem>No results</ListItem>
+                }
+              </MenuList>
+            </Popover>
           </div>
-          <Button className={classes.userOptions} color="inherit" href={authUrl}>
-            {authText}
+          <Button className={classes.userOptions} color="inherit" href={auth.path}>
+            {auth.text}
           </Button>
         </Toolbar>
       </AppBar>
