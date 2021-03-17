@@ -226,3 +226,25 @@ def get_tags_for_ride(
                 order_by(func.count(models.Tag.name).desc()).with_labels().\
                 all()
     return [r._asdict() for r in result]
+
+
+def get_tag_counts(
+    db: Session,
+    tag: str,
+    limit: int=10
+):
+    search = '{0}%'.format(tag)
+    print('test')
+    result = db.query(
+        models.Tag.name.label("name"),
+        func.count(models.Tag.name).label("tag_count")
+    ).\
+    join(models.RideTagAssociation).\
+    filter(
+        models.Tag.id==models.RideTagAssociation.tag_id,
+        models.Tag.name.ilike(search)
+    ).\
+    group_by(models.Tag.name).\
+    order_by(func.count(models.Tag.name).desc()).\
+    all()
+    return [r._asdict() for r in result]

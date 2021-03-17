@@ -1,8 +1,8 @@
 import React, { FC, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Box } from '@material-ui/core';
 import { isAuthenticated } from '../utils/auth';
 import RideList from './rides/RideList';
-import { Box } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -12,8 +12,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     // marginTop: 40,
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 }));
 
 export const Home: FC = () => {
@@ -21,7 +21,7 @@ export const Home: FC = () => {
 
   return (
     <>
-      <Box className={classes.content} >
+      <Box className={classes.content}>
         <RideList />
         <a className={classes.link} href="/admin">
           Admin Dashboard

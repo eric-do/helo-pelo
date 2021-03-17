@@ -1,15 +1,14 @@
-import React, { FC } from 'react';
+import React from 'react';
+import type { FC } from 'react';
 import { fetchUtils, Admin as ReactAdmin, Resource } from 'react-admin';
 import simpleRestProvider from 'ra-data-simple-rest';
 import authProvider from './authProvider';
 
 import { UserList, UserEdit, UserCreate } from './Users';
 
-const httpClient = (url: any, options: any) => {
-  if (!options) {
-    options = {};
-  }
+const httpClient = (url: any, options: any = {}) => {
   if (!options.headers) {
+    // eslint-disable-next-line no-param-reassign
     options.headers = new Headers({ Accept: 'application/json' });
   }
   const token = localStorage.getItem('token');

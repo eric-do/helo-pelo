@@ -1,4 +1,4 @@
-let rules = {
+const rules = {
   'max-len': ['error', 80, 2, { ignoreUrls: true }],
   'no-console': [0],
   'no-restricted-syntax': 'off',
@@ -6,6 +6,7 @@ let rules = {
   'no-underscore-dangle': 'off',
   'import/extensions': 'off',
   'import/no-unresolved': 'off',
+  'import/prefer-default-export': 'off',
   'operator-linebreak': 'off',
   'implicit-arrow-linebreak': 'off',
   'react/destructuring-assignment': 'off',
@@ -18,11 +19,23 @@ let rules = {
     'always',
     { exceptAfterSingleLine: true },
   ],
+  'prefer-default-export': 'off',
+  '@typescript-eslint/no-unused-vars': 0,
+  'no-unused-vars': 'off',
+  'react/jsx-props-no-spreading': 'off',
+  'import/no-extraneous-dependencies': 'off',
+  'no-shadow': 'off',
 };
 
 module.exports = {
-  extends: ['airbnb', 'plugin:prettier/recommended', 'prettier/react'],
-  parser: 'babel-eslint',
+  extends: [
+    'airbnb',
+    'eslint:recommended',
+    'plugin:prettier/recommended',
+    'prettier',
+  ],
+  // extends: [],
+  parser: '@typescript-eslint/parser',
   rules,
   env: {
     browser: true,

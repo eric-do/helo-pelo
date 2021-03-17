@@ -5,6 +5,7 @@ import uvicorn
 from app.api.api_v1.routers.users import users_router
 from app.api.api_v1.routers.auth import auth_router
 from app.api.api_v1.routers.rides import rides_router
+from app.api.api_v1.routers.tags import tags_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
@@ -51,6 +52,12 @@ app.include_router(
     prefix="/api/v1/rides",
     tags=["rides"],
     # dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    tags_router,
+    prefix="/api/v1/tags",
+    tags=["tags"]
 )
 
 if __name__ == "__main__":
