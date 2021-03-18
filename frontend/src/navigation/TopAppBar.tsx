@@ -176,49 +176,7 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
               </Typography>
             </div>
           </Box>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <Search />
-            </div>
-            <InputBase
-              placeholder="Search..."
-              value={search}
-              onChange={handleSearchInput}
-              classes={{ input: classes.inputInput }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-            <Popover
-              id={id}
-              className={classes.popover}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={blurTextInput}
-              disablePortal
-              disableAutoFocus
-              disableEnforceFocus
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-            >
-              <MenuList>
-                {tags.length > 0 &&
-                  tags.map((tag) => (
-                    <MenuItem className={classes.tagContainer} key={tag.name}>
-                      <ListItemText
-                        primary={tag.name}
-                        secondary={`${tag.tag_count} rides`}
-                      />
-                    </MenuItem>
-                  ))}
-                {tags.length === 0 && <ListItem>No results</ListItem>}
-              </MenuList>
-            </Popover>
-          </div>
+          <AutoCompleteSearch />
           <Button
             className={classes.userOptions}
             color="inherit"

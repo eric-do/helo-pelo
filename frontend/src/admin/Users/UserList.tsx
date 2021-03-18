@@ -9,7 +9,6 @@ import {
   EditButton,
 } from 'react-admin';
 
-// eslint-disable-next-line import/prefer-default-export
 export const UserList: FC = (props) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <List {...props}>
