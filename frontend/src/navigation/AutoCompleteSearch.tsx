@@ -1,11 +1,12 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   createStyles,
   makeStyles,
   Theme,
-  fade
+  fade,
 } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { getTags } from '../utils/api';
@@ -14,7 +15,7 @@ import type { Tag } from '../types';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     searchInput: {
-      width: 300
+      width: 300,
     },
   })
 );
@@ -22,32 +23,27 @@ const useStyles = makeStyles((theme: Theme) =>
 const AutoCompleteSearch = () => {
   const classes = useStyles();
   const [open, setOpen] = React.useState<boolean>(false);
-  const [options, setOptions] = React.useState<Tag[]>([]);
+  const [matchingTags, setMatchingTags] = React.useState<Tag[]>([]);
   const [search, setSearch] = React.useState<string>('');
-  const loading = open && options.length === 0;
+  const [value, setValue] = React.useState<string | null>('');
+  const [isPending, setPending] = React.useState<boolean>(false);
+  const loading = open && isPending;
 
   React.useEffect(() => {
-    let active = true;
+    if (search) {
+      setPending(true);
+      (async () => {
+        const tags = await getTags(search);
 
-    if (!loading) {
-      return undefined;
+        setMatchingTags(tags);
+        setPending(false);
+      })();
     }
-
-    (async () => {
-      if (search) {
-        const tags = await getTags(search)
-        setOptions(tags);
-      }
-    })();
-
-    return () => {
-      active = false;
-    }
-  }, [search])
+  }, [search]);
 
   React.useEffect(() => {
     if (!open) {
-      setOptions([]);
+      setMatchingTags([]);
     }
   }, [open]);
 
@@ -55,29 +51,51 @@ const AutoCompleteSearch = () => {
     <Autocomplete
       className={classes.searchInput}
       open={open}
+      // value={value}
+      // onChange={(_: any, newValue: string | null) => {
+      //   return setValue(newValue);
+      // }}
+      inputValue={search}
+      onInputChange={(event, newInputValue) => {
+        setSearch(newInputValue.replace(/\s/g, ''));
+      }}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
-      // getOptionSelected={(option, value) => option.name === value.name}
-      options={options}
+      noOptionsText="No tags found."
+      getOptionSelected={(option, value) => option.name === value.name}
       loading={loading}
+      options={matchingTags}
+      getOptionLabel={(option) => option.name}
+      renderOption={(option, { selected }) => (
+        <>
+          <div>
+            <span>{option.name}</span>
+            <br />
+            <span>{`${option.tag_count} rides`}</span>
+          </div>
+        </>
+      )}
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Asynchronous"
-          variant="outlined"
+          // onChange={(e) => console.log(e)}
+          label="Tag search"
           InputProps={{
             ...params.InputProps,
+            startAdornment: <InputAdornment position="start">#</InputAdornment>,
             endAdornment: (
-              <React.Fragment>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+              <>
+                {loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
                 {params.InputProps.endAdornment}
-              </React.Fragment>
+              </>
             ),
           }}
-          />
+        />
       )}
-      />
-  )
-}
+    />
+  );
+};
 
 export default AutoCompleteSearch;
