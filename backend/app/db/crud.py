@@ -139,20 +139,21 @@ def read_ride(
 def get_rides(
     db: Session,
     limit: int=100,
-    skip: int=0
+    skip: int=0,
+    tag: str=''
 ):
-    return db.query(models.Ride).order_by(models.Ride.original_air_time.desc()).limit(limit).offset(skip).all()
+    if not tag:
+        return db.query(models.Ride).order_by(models.Ride.original_air_time.desc()).limit(limit).offset(skip).all()
 
-    # return db.query(models.Ride, models.Tag, models.RideTagAssociation).\
-    #           filter(
-    #               models.Ride.id===models.RideTagAssociation.ride_id,
-    #               models.Tag.id===models.RideTagAssociation.tag_id
-    #           )
-    # result = db.query(models.Ride, func.count(models.RideTagAssociation.tag_id)).\
-    #     join(models.RideTagAssociation).filter(models.RideTagAssociation.ride_id==models.Ride.id).\
-    #     join(models.Tag).filter(models.RideTagAssociation.tag_id==models.Tag.id).group_by(models.Ride.id, models.RideTagAssociation.tag_id).all()
-    # print(result)
-    # return result
+    return db.query(models.Ride).\
+            select_from(models.Ride).\
+            join(models.RideTagAssociation).\
+            join(models.Tag).\
+            filter(models.Tag.name.startswith(tag)).\
+            order_by(models.Ride.original_air_time.desc()).\
+            limit(limit).\
+            offset(skip).\
+            all()
 
 
 def add_comment_to_ride(

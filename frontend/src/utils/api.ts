@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BACKEND_URL } from '../config';
+import type { Ride, RideOptions } from '../types';
 
 export const debounce = <T extends Function>(cb: T, wait = 250) => {
   let h: number = 0;
@@ -22,8 +23,15 @@ export const getMessage = async () => {
   return Promise.reject(new Error('Failed to get message from backend'));
 };
 
-export const getRides = async () => {
-  const response = await fetch(`${BACKEND_URL}/rides/`);
+export const getRides = async (options: RideOptions = {}) => {
+  const url = new URL(`${BACKEND_URL}/rides/`);
+
+  const params: RideOptions = options;
+  Object.keys(params).forEach((key) =>
+    url.searchParams.append(key, params[key])
+  );
+
+  const response = await fetch(url.toString());
   const rides = await response.json();
   return rides;
 };

@@ -8,7 +8,7 @@ import { Admin } from './admin';
 import { logout } from './utils/auth';
 import RideList from './views/rides/RideList';
 import Navigation from './navigation/Navigation';
-import { SessionContext } from './SessionProvider';
+import { SessionContext } from './providers/SessionProvider';
 
 const useStyles = makeStyles(() => ({
   app: {

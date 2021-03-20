@@ -25,7 +25,8 @@ from app.db.schemas import (
     RideOut,
     RideDB,
     CommentIn,
-    CommentOut
+    CommentOut,
+    Tag
 )
 from app.db.helpers import parse_tags_from_text
 from app.core.auth import get_current_active_user, get_current_active_superuser
@@ -79,9 +80,10 @@ async def get_rides(
     response: Response,
     limit: int=100,
     skip: int=0,
+    tag: str='',
     db=Depends(get_db)
 ):
-    return get_all_rides(db, limit=limit, skip=skip)
+    return get_all_rides(db, limit=limit, skip=skip, tag=tag)
 
 
 @r.get(
@@ -138,4 +140,23 @@ async def get_ride_tags(
     ride_id: int,
     db=Depends(get_db)
 ):
-    return get_tags_for_ride(db, ride_id);
+    return get_tags_for_ride(db, ride_id)
+
+
+@r.post(
+    "/{ride_id}/tags",
+    status_code=201
+)
+async def add_ride_tags(
+    response: Response,
+    ride_id: int,
+    tags: t.List[str],
+    current_user=Depends(get_current_active_user),
+    db=Depends(get_db)
+):
+    add_multiple_tags_to_ride(
+        db,
+        tags,
+        ride_id,
+        current_user
+    )

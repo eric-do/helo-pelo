@@ -175,3 +175,46 @@ def test_increment_tag_count_for_existing_tags(
 ):
     pass
 
+def test_add_tags_to_ride(
+    client,
+    test_ride,
+    user_token_headers,
+    test_db
+):
+    response = client.post(
+        f"/api/v1/rides/{test_ride.id}/tags",
+        json=["test", "dirty30"],
+        headers=user_token_headers
+    )
+
+    assert response.status_code == 201
+
+    response = client.get(f"/api/v1/rides/{test_ride.id}/tags")
+    tags = response.json()
+
+    assert response.status_code == 200
+    assert any(tag['name'] == "test" for tag in tags)
+
+
+def test_get_rides_by_matching_tags(
+    client,
+    test_ride,
+    user_token_headers,
+    test_db
+):
+    response = client.post(
+        f"/api/v1/rides/{test_ride.id}/tags",
+        json=["test", "dirty30"],
+        headers=user_token_headers
+    )
+
+    response = client.get(f"/api/v1/rides/?tag=dirty")
+    rides = response.json()
+
+    assert len(rides) == 1
+    assert rides[0]["title"] == "90 minutes of hell"
+
+    response = client.get(f"/api/v1/rides/?tag=noresult")
+    rides = response.json()
+
+    assert len(rides) == 0
