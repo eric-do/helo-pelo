@@ -2,7 +2,13 @@
  * @jest-environment jsdom
  */
 import React from 'react';
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  waitFor,
+  screen,
+  cleanup,
+} from '@testing-library/react';
 import { within } from '@testing-library/dom';
 import '@testing-library/jest-dom/extend-expect';
 import { rest } from 'msw';
@@ -108,6 +114,7 @@ it('should render the search field', async () => {
   const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
 
   expect(appBar.getByLabelText('Tag search')).toBeInTheDocument();
+  cleanup();
 });
 
 it('should accept input in the search field', async () => {

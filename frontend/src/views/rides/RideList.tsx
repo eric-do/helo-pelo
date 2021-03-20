@@ -44,7 +44,6 @@ const RideList: FC = () => {
 
   return (
     <div className={classes.cardList}>
-      {options.tag}
       {rides && rides.map((ride) => <RideCard ride={ride} key={ride.id} />)}
     </div>
   );

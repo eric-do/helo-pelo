@@ -40,22 +40,21 @@ const AutoCompleteSearch = () => {
   };
 
   React.useEffect(() => {
-    if (search) {
-      setPending(true);
-      (async () => {
-        const tags = await getTags(search);
+    let mounted = true;
 
+    setPending(true);
+    (async () => {
+      const tags = await getTags(search);
+      if (mounted) {
         setMatchingTags(tags);
         setPending(false);
-      })();
-    }
-  }, [search]);
+      }
+    })();
 
-  React.useEffect(() => {
-    if (!open) {
-      setMatchingTags([]);
-    }
-  }, [open]);
+    return () => {
+      mounted = false;
+    };
+  }, [search]);
 
   return (
     <Autocomplete
