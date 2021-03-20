@@ -143,7 +143,11 @@ def get_rides(
     tag: str=''
 ):
     if not tag:
-        return db.query(models.Ride).order_by(models.Ride.original_air_time.desc()).limit(limit).offset(skip).all()
+        return db.query(models.Ride).\
+                order_by(models.Ride.original_air_time.desc()).\
+                limit(limit).\
+                offset(skip).\
+                all()
 
     return db.query(models.Ride).\
             select_from(models.Ride).\
@@ -235,7 +239,6 @@ def get_tag_counts(
     limit: int=10
 ):
     search = '{0}%'.format(tag)
-    print('test')
     result = db.query(
         models.Tag.name.label("name"),
         func.count(models.Tag.name).label("tag_count")

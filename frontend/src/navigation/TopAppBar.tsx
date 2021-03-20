@@ -174,7 +174,7 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
           <Box className={classes.titleContainer}>
             <div>
               <Typography variant="h6" className={classes.title}>
-                TEST
+                HELO PELO
               </Typography>
             </div>
           </Box>

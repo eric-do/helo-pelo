@@ -2,7 +2,13 @@
  * @jest-environment jsdom
  */
 import React from 'react';
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  waitFor,
+  screen,
+  cleanup,
+} from '@testing-library/react';
 import { within } from '@testing-library/dom';
 import '@testing-library/jest-dom/extend-expect';
 import { rest } from 'msw';
@@ -19,6 +25,10 @@ const tags: Tag[] = [
   {
     name: 'tenOutOfTen',
     tag_count: 234,
+  },
+  {
+    name: 'DoesNotStartWithTe',
+    tag_count: 543,
   },
 ];
 
@@ -110,22 +120,37 @@ it('should render the search field', async () => {
   expect(appBar.getByLabelText('Tag search')).toBeInTheDocument();
 });
 
+xit('should dropdown when user clicks search field', async () => {
+  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
+
+  fireEvent.click(input);
+  expect(screen.getByRole('presentation')).toBeInTheDocument();
+  expect(screen.getByText(/Loading/)).toBeInTheDocument();
+});
+
 it('should accept input in the search field', async () => {
   const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
   const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
 
   fireEvent.change(input, { target: { value: 'te' } });
   expect(input.value).toBe('te');
+});
 
-  await waitFor(() => screen.getByText(`test`));
+it('should dynamically render matched tags as user types', async () => {
+  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
+  const search = 'te';
+
+  fireEvent.change(input, { target: { value: search } });
+  expect(input.value).toBe(search);
+
+  await waitFor(() => screen.getAllByText(`rides`, { exact: false }));
 
   tags.forEach((tag) => {
     expect(appBar.getByText(tag.name)).toBeInTheDocument();
     expect(appBar.getByText(`${tag.tag_count} rides`)).toBeInTheDocument();
   });
-
-  // const listbox = within(appBar.getByRole('listbox'));
-  // fireEvent.click(listbox.getByText(tags[0].name));
 });
 
 it('should not allow users to enter separate words in the search', async () => {
@@ -134,11 +159,14 @@ it('should not allow users to enter separate words in the search', async () => {
 
   fireEvent.change(input, { target: { value: 'test string' } });
   expect(input.value).toBe('teststring');
-  expect(screen.getByRole('presentation')).toBeInTheDocument();
-  expect(screen.getByText(/Loading/)).toBeInTheDocument();
+});
 
-  await waitFor(() => screen.getByText(/No tags found/));
-  expect(screen.getByText(/No tags found/)).toBeInTheDocument();
+it('should not allow users to search with special characters', async () => {
+  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
+
+  fireEvent.change(input, { target: { value: 'test string@#)*(^#|}{' } });
+  expect(input.value).toBe('teststring');
 });
 
 it('should display "No tags found" if no tags are found', async () => {
