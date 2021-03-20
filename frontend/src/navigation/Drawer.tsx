@@ -94,7 +94,7 @@ const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
 
   return (
     <nav className={classes.drawer} aria-label="Site sections">
-      <Hidden smUp>
+      <Hidden mdUp>
         <Drawer
           open={open}
           BackdropProps={{ invisible: true }}
@@ -111,7 +111,7 @@ const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
           {drawer}
         </Drawer>
       </Hidden>
-      <Hidden xsDown>
+      <Hidden smDown>
         <Drawer
           variant="permanent"
           classes={{
