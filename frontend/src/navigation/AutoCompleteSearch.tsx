@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -11,6 +11,7 @@ import {
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { getTags } from '../utils/api';
 import type { Tag } from '../types';
+import { RideOptionsContext } from '../providers/RidesProvider';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,9 +26,18 @@ const AutoCompleteSearch = () => {
   const [open, setOpen] = React.useState<boolean>(false);
   const [matchingTags, setMatchingTags] = React.useState<Tag[]>([]);
   const [search, setSearch] = React.useState<string>('');
-  const [value, setValue] = React.useState<string | null>('');
+  const [value, setValue] = React.useState<Tag | null>(null);
   const [isPending, setPending] = React.useState<boolean>(false);
   const loading = open && isPending;
+  const { setOptions } = useContext(RideOptionsContext);
+
+  const updateSelectedOption = (
+    _: React.ChangeEvent<{}>,
+    newValue: Tag | null
+  ) => {
+    setValue(newValue);
+    setOptions({ tag: newValue ? newValue.name : '' });
+  };
 
   React.useEffect(() => {
     if (search) {
@@ -51,10 +61,8 @@ const AutoCompleteSearch = () => {
     <Autocomplete
       className={classes.searchInput}
       open={open}
-      // value={value}
-      // onChange={(_: any, newValue: string | null) => {
-      //   return setValue(newValue);
-      // }}
+      value={value}
+      onChange={updateSelectedOption}
       inputValue={search}
       onInputChange={(event, newInputValue) => {
         setSearch(newInputValue.replace(/\s/g, ''));

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { isAuthenticated } from './utils';
+import { isAuthenticated } from '../utils';
 
 export const SessionContext = React.createContext({
   isAuthenticated: isAuthenticated(),

@@ -31,7 +31,7 @@ import {
   addComment,
 } from '../../utils/api';
 import { logout } from '../../utils/auth';
-import { SessionContext } from '../../SessionProvider';
+import { SessionContext } from '../../providers/SessionProvider';
 
 type RideCardProps = {
   ride: Ride;

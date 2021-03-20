@@ -5,7 +5,8 @@ import { Redirect } from 'react-router-dom';
 import { getRides } from '../../utils/api';
 import type { Comment, Tag, Ride } from '../../types';
 import RideCard from './RideCard';
-import { SessionContext } from '../../SessionProvider';
+import { SessionContext } from '../../providers/SessionProvider';
+import { RideOptionsContext } from '../../providers/RidesProvider';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,21 +28,23 @@ const RideList: FC = () => {
   const [error, setError] = useState<string>('');
   const classes = useStyles();
   const { isAuthenticated } = useContext(SessionContext);
+  const { options, setOptions } = useContext(RideOptionsContext);
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await getRides();
+        const data = await getRides(options);
         setRides(data);
       } catch (e) {
         console.log(e);
         setError(e);
       }
     })();
-  }, []);
+  }, [options]);
 
   return (
     <div className={classes.cardList}>
+      {options.tag}
       {rides && rides.map((ride) => <RideCard ride={ride} key={ride.id} />)}
     </div>
   );

@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box } from '@material-ui/core';
 import { isAuthenticated } from '../utils/auth';
 import RideList from './rides/RideList';
+import { RideOptionsProvider } from '../providers/RidesProvider';
 
 const useStyles = makeStyles((theme) => ({
   link: {

@@ -196,7 +196,7 @@ def test_add_tags_to_ride(
     assert any(tag['name'] == "test" for tag in tags)
 
 
-def test_rides_can_be_queried_by_tags(
+def test_get_rides_by_matching_tags(
     client,
     test_ride,
     user_token_headers,

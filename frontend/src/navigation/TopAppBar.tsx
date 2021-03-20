@@ -21,7 +21,8 @@ import {
   fade,
 } from '@material-ui/core/styles';
 import { Menu, Search } from '@material-ui/icons';
-import { SessionContext } from '../SessionProvider';
+import { SessionContext } from '../providers/SessionProvider';
+import { RideOptionsContext } from '../providers/RidesProvider';
 import { debounce, getTags } from '../utils/api';
 import type { Tag } from '../types';
 import AutoCompleteSearch from './AutoCompleteSearch';
@@ -117,6 +118,7 @@ type AppBarProps = {
 
 const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
   const classes = useStyles();
+  const OptionsContext = useContext(RideOptionsContext);
 
   // AUTHENTICATION DISPLAY
   const { isAuthenticated } = useContext(SessionContext);

@@ -25,6 +25,8 @@ const rules = {
   'react/jsx-props-no-spreading': 'off',
   'import/no-extraneous-dependencies': 'off',
   'no-shadow': 'off',
+  'camelcase': 'off',
+  'no-debugger': 'off',
 };
 
 module.exports = {
