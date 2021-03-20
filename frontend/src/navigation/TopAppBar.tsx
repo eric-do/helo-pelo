@@ -32,7 +32,12 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       flexGrow: 1,
       width: '100%',
-      marginBottom: 60,
+      [theme.breakpoints.up('sm')]: {
+        marginBottom: 60,
+      },
+      [theme.breakpoints.down('xs')]: {
+        marginBottom: 54,
+      },
     },
     appBar: {
       justifyContent: 'space-between',
@@ -59,6 +64,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     menuButton: {
       marginRight: theme.spacing(2),
+      [theme.breakpoints.up('sm')]: {
+        display: 'none',
+      },
     },
     search: {
       position: 'relative',

@@ -6,6 +6,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Hidden,
 } from '@material-ui/core';
 import { Inbox } from '@material-ui/icons';
 import {
@@ -93,21 +94,33 @@ const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
 
   return (
     <nav className={classes.drawer} aria-label="Site sections">
-      <Drawer
-        open={open}
-        BackdropProps={{ invisible: true }}
-        variant="permanent"
-        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-        onClose={toggleDrawer(false)}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-        ModalProps={{
-          keepMounted: true,
-        }}
-      >
-        {drawer}
-      </Drawer>
+      <Hidden smUp>
+        <Drawer
+          open={open}
+          BackdropProps={{ invisible: true }}
+          variant="temporary"
+          anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+          onClose={toggleDrawer(false)}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          ModalProps={{
+            keepMounted: true,
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Hidden>
+      <Hidden xsDown>
+        <Drawer
+          variant="permanent"
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Hidden>
     </nav>
   );
 };
