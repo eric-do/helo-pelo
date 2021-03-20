@@ -64,7 +64,7 @@ const AutoCompleteSearch = () => {
       onChange={updateSelectedOption}
       inputValue={search}
       onInputChange={(event, newInputValue) => {
-        setSearch(newInputValue.replace(/\s/g, ''));
+        setSearch(newInputValue.replace(/[^a-z0-9]/gi, ''));
       }}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}

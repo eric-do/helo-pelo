@@ -161,11 +161,11 @@ it('should not allow users to enter separate words in the search', async () => {
   expect(input.value).toBe('teststring');
 });
 
-it('should not allow users to enter separate words in the search', async () => {
+it('should not allow users to search with special characters', async () => {
   const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
   const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
 
-  fireEvent.change(input, { target: { value: 'test string' } });
+  fireEvent.change(input, { target: { value: 'test string@#)*(^#|}{' } });
   expect(input.value).toBe('teststring');
 });
 
