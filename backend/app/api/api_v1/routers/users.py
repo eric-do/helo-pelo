@@ -8,8 +8,9 @@ from app.db.crud import (
     create_user,
     delete_user,
     edit_user,
+    get_user_rides as get_user_rides_from_db
 )
-from app.db.schemas import UserCreate, UserEdit, User, UserOut
+from app.db.schemas import UserCreate, UserEdit, User, UserOut, RideDB
 from app.core.auth import get_current_active_user, get_current_active_superuser
 
 users_router = r = APIRouter()
@@ -105,3 +106,17 @@ async def user_delete(
     Delete existing user
     """
     return delete_user(db, user_id)
+
+
+@r.get(
+    "/users/{user_id}/rides",
+    response_model=t.List[RideDB]
+)
+async def get_user_rides(
+    request: Request,
+    user_id: int,
+    limit: int=10,
+    skip: int=0,
+    db=Depends(get_db)
+):
+    return get_user_rides_from_db(db, user_id, limit, skip)

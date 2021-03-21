@@ -167,14 +167,6 @@ def test_successfully_add_comment_with_duplicate_tags(
     assert len(test_ride.tags) == original_tag_count + 1
 
 
-def test_increment_tag_count_for_existing_tags(
-    client,
-    test_user,
-    test_ride, # update with a ride with tags
-    user_token_headers
-):
-    pass
-
 def test_add_tags_to_ride(
     client,
     test_ride,
@@ -218,3 +210,44 @@ def test_get_rides_by_matching_tags(
     rides = response.json()
 
     assert len(rides) == 0
+
+
+def test_get_rides_user_has_commented_on(
+    client,
+    superuser_token_headers,
+    test_superuser
+):
+    global valid_ride_first
+    global valid_ride_second
+
+    comment = { "comment": "this is a test comment" }
+
+    response = client.post(
+        f"/api/v1/rides/",
+        json=valid_ride_first,
+        headers=superuser_token_headers
+    )
+
+    ride = response.json()
+    ride_id = ride['id']
+
+    client.post(
+        f"/api/v1/rides/",
+        json=valid_ride_second,
+        headers=superuser_token_headers
+    )
+    client.post(
+        f"/api/v1/rides/{ride_id}/comments",
+        json=comment,
+        headers=superuser_token_headers
+    )
+
+    response = client.get(
+        f"/api/v1/users/{test_superuser.id}/rides",
+    )
+
+    rides = response.json()
+
+    assert response.status_code == 200
+    assert len(rides) == 1
+    assert rides[0]["title"] == valid_ride_first["title"]

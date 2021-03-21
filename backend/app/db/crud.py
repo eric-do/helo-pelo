@@ -72,6 +72,19 @@ def edit_user(
     return db_user
 
 
+def get_user_rides(
+    db: Session,
+    user_id: int,
+    limit: int=10,
+    skip: int=0
+):
+    return db.query(models.Ride).join(models.Comment).\
+              filter(
+                  models.Comment.user_id == user_id,
+                  models.Comment.ride_id == models.Ride.id
+              ).all()
+
+
 def get_rides_from_peloton(limit):
     try:
         rides = []
