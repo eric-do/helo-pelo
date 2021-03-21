@@ -43,7 +43,7 @@ app.include_router(
     users_router,
     prefix="/api/v1",
     tags=["users"],
-    dependencies=[Depends(get_current_active_user)],
+    # dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
@@ -51,7 +51,6 @@ app.include_router(
     rides_router,
     prefix="/api/v1/rides",
     tags=["rides"],
-    # dependencies=[Depends(get_current_active_user)],
 )
 
 app.include_router(
