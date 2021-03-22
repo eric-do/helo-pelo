@@ -189,7 +189,8 @@ def add_comment_to_ride(
     db.refresh(comment_db)
     return comment_db
 
-
+# TODO: Refactor to use **kwargs
+# Why: dynamic filtering, e.g. filter_by(user="name", ride_id="id")
 def get_comments_for_ride(
     db: Session,
     ride_id: int
