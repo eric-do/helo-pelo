@@ -10,6 +10,7 @@ import {
   cleanup,
 } from '@testing-library/react';
 import { within } from '@testing-library/dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
@@ -115,13 +116,21 @@ const toggleDrawer = (open: boolean) => (
 ) => {};
 
 it('should render the search field', async () => {
-  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
 
   expect(appBar.getByLabelText('Tag search')).toBeInTheDocument();
 });
 
 xit('should dropdown when user clicks search field', async () => {
-  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
   const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
 
   fireEvent.click(input);
@@ -130,7 +139,11 @@ xit('should dropdown when user clicks search field', async () => {
 });
 
 it('should accept input in the search field', async () => {
-  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
   const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
 
   fireEvent.change(input, { target: { value: 'te' } });
@@ -138,7 +151,11 @@ it('should accept input in the search field', async () => {
 });
 
 it('should dynamically render matched tags as user types', async () => {
-  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
   const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
   const search = 'te';
 
@@ -154,7 +171,11 @@ it('should dynamically render matched tags as user types', async () => {
 });
 
 it('should not allow users to enter separate words in the search', async () => {
-  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
   const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
 
   fireEvent.change(input, { target: { value: 'test string' } });
@@ -162,7 +183,11 @@ it('should not allow users to enter separate words in the search', async () => {
 });
 
 it('should not allow users to search with special characters', async () => {
-  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
   const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
 
   fireEvent.change(input, { target: { value: 'test string@#)*(^#|}{' } });
@@ -170,11 +195,51 @@ it('should not allow users to search with special characters', async () => {
 });
 
 it('should display "No tags found" if no tags are found', async () => {
-  const appBar = render(<TopAppBar isOpen toggleDrawer={toggleDrawer} />);
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
   const input = appBar.getByLabelText('Tag search') as HTMLInputElement;
 
   fireEvent.change(input, { target: { value: 'nomatchinghashtags' } });
 
   await waitFor(() => screen.getByText(/No tags found/));
   expect(screen.getByText(/No tags found/)).toBeInTheDocument();
+});
+
+it('should display a button to acccess user options menu', async () => {
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
+  expect(appBar.getByLabelText('User menu')).toBeInTheDocument();
+});
+
+it('should display user options when button is clicked', async () => {
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
+  const button = appBar.getByLabelText('User menu');
+  fireEvent.click(button);
+  expect(appBar.getByText('My Profile')).toBeInTheDocument();
+  expect(appBar.getByText('Sign out')).toBeInTheDocument();
+});
+
+it('should log the user out when clicking Sign out', async () => {
+  const appBar = render(
+    <Router>
+      <TopAppBar isOpen toggleDrawer={toggleDrawer} />
+    </Router>
+  );
+  const button = appBar.getByLabelText('User menu');
+  fireEvent.click(button);
+
+  const logout = appBar.getByText('Sign out');
+  fireEvent.click(logout);
+
+  waitFor(() => expect(screen.getByText('Remember me')).toBeInTheDocument);
 });

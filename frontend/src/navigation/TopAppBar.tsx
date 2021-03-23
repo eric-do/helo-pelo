@@ -11,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemIcon,
   MenuList,
   MenuItem,
 } from '@material-ui/core';
@@ -20,7 +21,15 @@ import {
   Theme,
   fade,
 } from '@material-ui/core/styles';
-import { Menu, Search } from '@material-ui/icons';
+import {
+  Menu,
+  Settings,
+  Search,
+  MoreVert,
+  ExitToApp,
+  Person,
+} from '@material-ui/icons';
+import { Link } from 'react-router-dom';
 import { SessionContext } from '../providers/SessionProvider';
 import { RideOptionsContext } from '../providers/RidesProvider';
 import { debounce, getTags } from '../utils/api';
@@ -58,6 +67,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     title: {
       flexGrow: 1,
+      color: theme.palette.primary.main,
       [theme.breakpoints.up('sm')]: {
         display: 'block',
       },
@@ -107,7 +117,9 @@ const useStyles = makeStyles((theme: Theme) =>
     userOptions: {
       marginLeft: theme.spacing(5),
     },
-    popover: {},
+    popover: {
+      marginTop: 4,
+    },
     tagList: {},
     tagContainer: {
       alignItems: 'flex-start',
@@ -134,37 +146,25 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
     ? { path: '/logout', text: 'Logout' }
     : { path: '/login', text: 'Login' };
 
-  // SEARCH HANDLING
-  let appBarRef: HTMLDivElement | null = null;
+  // MENU LOGIC
+  let appBarRef: HTMLButtonElement | null = null;
   const [tags, setTags] = useState<Tag[]>([]);
-  const [search, setSearch] = useState('');
-  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-  const setAppBarRef = (element: HTMLDivElement) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const setAppBarRef = (element: HTMLButtonElement) => {
     appBarRef = element;
   };
 
-  const blurTextInput = () => {
-    if (appBarRef) {
-      setAnchorEl(null);
-    }
-  };
-
-  const handleSearchInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const cleanedSearch = input.replace(/\s/g, '');
-    setSearch(cleanedSearch);
-    setAnchorEl(e.currentTarget);
-    if (input !== '') {
-      const matchingTags = await getTags(cleanedSearch);
-      setTags(matchingTags);
-    } else {
-      setAnchorEl(null);
-    }
-  };
-
-  // DRAWER LOGIC
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? 'menu-popover' : undefined;
 
   return (
     <div className={classes.root}>
@@ -181,19 +181,54 @@ const TopAppBar = ({ toggleDrawer, isOpen }: AppBarProps) => {
           </IconButton>
           <Box className={classes.titleContainer}>
             <div>
-              <Typography variant="h6" className={classes.title}>
-                HELO PELO
-              </Typography>
+              <Link to="/">
+                <Typography variant="h6" className={classes.title}>
+                  HELO PELO
+                </Typography>
+              </Link>
             </div>
           </Box>
           <AutoCompleteSearch />
-          <Button
+          <IconButton
+            edge="start"
+            aria-describedby={id}
+            aria-label="User menu"
+            onClick={handleClick}
             className={classes.userOptions}
             color="inherit"
-            href={auth.path}
           >
-            {auth.text}
-          </Button>
+            <MoreVert />
+          </IconButton>
+          <Popover
+            className={classes.popover}
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <List>
+              <ListItem button component="a" href="/profile">
+                <ListItemIcon>
+                  <Person />
+                </ListItemIcon>
+                <ListItemText primary="My Profile" />
+              </ListItem>
+              <ListItem button component="a" href={auth.path}>
+                <ListItemIcon>
+                  <ExitToApp />
+                </ListItemIcon>
+                <ListItemText primary="Sign out" />
+              </ListItem>
+            </List>
+          </Popover>
         </Toolbar>
       </AppBar>
     </div>
