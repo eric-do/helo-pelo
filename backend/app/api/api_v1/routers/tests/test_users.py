@@ -108,3 +108,66 @@ def test_unauthorized_routes(client, user_token_headers):
     assert response.status_code == 403
     response = client.get("/api/v1/users/123", headers=user_token_headers)
     assert response.status_code == 403
+
+
+def test_get_user_profile(client, test_user, test_profile):
+    profile_attributes = [
+        "user_id",
+        "reddit_handle",
+        "peloton_handle",
+        "location",
+        "avatar",
+        "bio"
+    ]
+
+    response = client.get(f"/api/v1/users/{test_user.id}/profile")
+    assert response.status_code == 200
+
+    profile = response.json()
+    for attribute in profile_attributes:
+        assert attribute in profile
+
+
+def test_update_user_profile(
+    client,
+    test_user,
+    test_profile,
+    user_token_headers):
+
+    profile = dict(
+        reddit_handle="reddit_update",
+        location="Fremont, CA",
+        avatar="http://path.to.test/image_update.png",
+        bio = "This is a short test that has been changed"
+    )
+
+    response = client.put(
+        f"/api/v1/users/{test_user.id}/profile",
+        json=profile,
+        headers=user_token_headers
+    )
+    assert response.status_code == 200
+
+    response = client.get(f"/api/v1/users/{test_user.id}/profile")
+    updated_profile = response.json()
+    print(updated_profile)
+    for key in profile:
+        assert profile[key] == updated_profile[key]
+
+
+def test_userid_and_current_user_must_match(
+    client,
+    test_user,
+    user_token_headers
+):
+    profile = dict(
+        reddit_handle="test_attribute",
+    )
+
+    response = client.put(
+        f"/api/v1/users/{test_user.id + 1}/profile",
+        json=profile,
+        headers=user_token_headers
+    )
+
+    assert response.status_code == 401

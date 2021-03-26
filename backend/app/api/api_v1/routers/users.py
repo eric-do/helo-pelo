@@ -1,6 +1,12 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from fastapi import (
+    APIRouter,
+    Request,
+    Depends,
+    Response,
+    encoders,
+    HTTPException
+)
 import typing as t
-
 from app.db.session import get_db
 from app.db.crud import (
     get_users,
@@ -8,9 +14,19 @@ from app.db.crud import (
     create_user,
     delete_user,
     edit_user,
-    get_user_rides as get_user_rides_from_db
+    get_user_rides as get_user_rides_from_db,
+    get_user_profile as get_user_profile_from_db,
+    update_user_profile as update_user_profile_db
 )
-from app.db.schemas import UserCreate, UserEdit, User, UserOut, RideDB
+from app.db.schemas import (
+    UserCreate,
+    UserEdit,
+    User,
+    UserProfile,
+    UserOut,
+    RideDB,
+    UserProfileEdit
+)
 from app.core.auth import get_current_active_user, get_current_active_superuser
 
 users_router = r = APIRouter()
@@ -120,3 +136,31 @@ async def get_user_rides(
     db=Depends(get_db)
 ):
     return get_user_rides_from_db(db, user_id, limit, skip)
+
+
+@r.get(
+    "/users/{user_id}/profile",
+    response_model=UserProfile
+)
+async def get_user_profile(
+    request: Request,
+    user_id: int,
+    db=Depends(get_db)
+):
+    return get_user_profile_from_db(db, user_id)
+
+
+@r.put(
+    "/users/{user_id}/profile",
+    status_code=200
+)
+async def update_user_profile(
+    request: Request,
+    user_id: int,
+    user_profile: UserProfileEdit,
+    current_user=Depends(get_current_active_user),
+    db=Depends(get_db)
+):
+    if (user_id != current_user.id):
+        raise HTTPException(status_code=401, detail="User authorization denied")
+    update_user_profile_db(db, user_id, user_profile)

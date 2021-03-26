@@ -15,6 +15,7 @@ class UserOut(UserBase):
     class Config:
         orm_mode = True
 
+
 class UserCreate(UserBase):
     password: str
 
@@ -34,6 +35,26 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class UserProfile(BaseModel):
+    user_id: int
+    reddit_handle: str = None
+    peloton_handle: str = None
+    location: str = None
+    avatar: str = None
+    bio: str = None
+
+    class Config:
+        orm_mode = True
+
+
+class UserProfileEdit(BaseModel):
+    reddit_handle: str = None
+    peloton_handle: str = None
+    location: str = None
+    avatar: str = None
+    bio: str = None
 
 
 class Token(BaseModel):
