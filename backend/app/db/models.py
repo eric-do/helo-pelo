@@ -41,6 +41,17 @@ class User(Base):
     )
 
 
+class UserProfile(Base):
+    __tablename__ = "user_profile"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    reddit_handle = Column(String)
+    peloton_handle = Column(String)
+    location = Column(String)
+    avatar = Column(String)
+    bio = Column(String)
+
+
 class Instructor(Base):
     __tablename__ = "instructor"
 

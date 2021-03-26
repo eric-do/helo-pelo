@@ -133,6 +133,24 @@ def test_superuser(test_db) -> models.User:
 
 
 @pytest.fixture
+def test_profile(test_db, test_user) -> models.UserProfile:
+    """
+    User profile for testing
+    """
+    profile = models.UserProfile(
+        user_id=test_user.id,
+        reddit_handle="reddit_test_handle",
+        peloton_handle="peloton_test_handle",
+        location="Fremont, CA",
+        avatar="http://path.to.test/image.png",
+        bio = "This is a short test bio about this test user"
+    )
+    test_db.add(profile)
+    test_db.commit()
+    return profile
+
+
+@pytest.fixture
 def test_ride(test_db) -> models.Ride:
     """
     Ride for testing
@@ -153,6 +171,7 @@ def test_ride(test_db) -> models.Ride:
     test_db.add(ride)
     test_db.commit()
     return ride
+
 
 @pytest.fixture
 def test_comment(

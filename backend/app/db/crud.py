@@ -72,6 +72,22 @@ def edit_user(
     return db_user
 
 
+def get_user_profile(db: Session, user_id: int) -> schemas.UserProfile:
+    return db.query(models.UserProfile).\
+            filter_by(user_id=user_id).\
+            first()
+
+
+def update_user_profile(
+    db: Session,
+    user_id: int,
+    user_profile: schemas.UserProfileEdit
+):
+    db.query(models.UserProfile).\
+        filter(models.UserProfile.user_id == user_id).\
+        update(user_profile, synchronize_session=False)
+
+
 def get_user_rides(
     db: Session,
     user_id: int,
