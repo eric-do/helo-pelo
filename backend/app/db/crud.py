@@ -211,9 +211,10 @@ def get_comments_for_ride(
     db: Session,
     ride_id: int
 ):
-    return db.query(models.Comment).filter(
-        models.Comment.ride_id==ride_id
-    ).all()
+    return db.query(models.Comment).\
+        filter(models.Comment.ride_id==ride_id).\
+        order_by(models.Comment.created_at.desc()).\
+        all()
 
 
 def create_tag(db, tag):

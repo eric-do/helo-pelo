@@ -210,7 +210,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
       setCommentCount(Math.min(commentsFromAPI.length, 2));
       setTags(tagsFromAPI);
     })();
-  }, []);
+  }, [ride]);
 
   return (
     <Box className={classes.root}>

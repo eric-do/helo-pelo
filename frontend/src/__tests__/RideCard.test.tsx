@@ -93,8 +93,8 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen());
-afterAll(() => server.resetHandlers());
 afterAll(() => server.close());
+afterEach(() => server.resetHandlers());
 
 it('should render rides with comments and tags correctly', async () => {
   const ride = render(<RideCard ride={validRide} />);
@@ -127,7 +127,7 @@ it('should render rides with comments and tags correctly', async () => {
   expect(ride.getByText('See more comments')).toBeInTheDocument();
 });
 
-it('should not display "See more coments" if there are no comments', () => {
+it('should not display "See more comments" if there are no comments', () => {
   server.use(
     rest.get(`${BACKEND_URL}/rides/10/comments`, (req, res, ctx) => {
       return res(ctx.json(comments));
@@ -157,4 +157,34 @@ it('should accept input in the comment field', async () => {
 
   fireEvent.change(input, { target: { value: comment.comment } });
   expect(input.value).toBe(comment.comment);
+});
+
+it('should update comments after submitting a comment', async () => {
+  const comment = {
+    comment: 'newly added comment',
+    id: 44,
+    created_at: '2021-03-09T21:20:29.035720',
+    user: {
+      id: 2,
+      username: 'test_user1',
+      email: 'user1@mail.com',
+      is_active: true,
+      is_superuser: true,
+    },
+  };
+
+  const ride = render(<RideCard ride={validRide} />);
+  const input = ride.getByPlaceholderText('Add tag(s)') as HTMLInputElement;
+
+  server.use(
+    rest.get(`${BACKEND_URL}/rides/10/comments`, (req, res, ctx) => {
+      return res(ctx.json([comment, ...comments]));
+    })
+  );
+
+  fireEvent.change(input, { target: { value: comment.comment } });
+  fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+  waitFor(
+    () => expect(screen.getByText('newly added comment')).toBeInTheDocument
+  );
 });
