@@ -187,4 +187,5 @@ it('should update comments after submitting a comment', async () => {
   waitFor(
     () => expect(screen.getByText('newly added comment')).toBeInTheDocument
   );
+  waitFor(() => expect(input.value).toBe(''));
 });
