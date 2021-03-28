@@ -110,12 +110,8 @@ const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
       <Divider />
       <List>
         {routes.map((route) => (
-          <NavLink to={route.path}>
-            <ListItem
-              button
-              onClick={() => setOptions({ tag: '' })}
-              key={route.name}
-            >
+          <NavLink to={route.path} key={route.name}>
+            <ListItem button onClick={() => setOptions({ tag: '' })}>
               <ListItemIcon>{route.icon}</ListItemIcon>
               <ListItemText primary={route.name} />
             </ListItem>
@@ -128,12 +124,8 @@ const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
           <ListItemText primary="Trending Tags" />
         </ListItem>
         {tags.map((tag) => (
-          <NavLink to="/rides">
-            <ListItem
-              button
-              onClick={() => setOptions({ tag: tag.name })}
-              key={tag.name}
-            >
+          <NavLink to="/rides" key={tag.name}>
+            <ListItem button onClick={() => setOptions({ tag: tag.name })}>
               <ListItemText
                 primary={`#${tag.name}`}
                 secondary={`${tag.tag_count} ${
