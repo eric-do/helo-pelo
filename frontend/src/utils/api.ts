@@ -11,6 +11,25 @@ export const debounce = <T extends Function>(cb: T, wait = 250) => {
   return <T>(<any>callable);
 };
 
+export const getCurrentUser = async () => {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await fetch(`${BACKEND_URL}/users/me`, config);
+  const user = response.json();
+  return user;
+};
+
+export const getUserProfile = async (userId: number) => {
+  const response = await fetch(`${BACKEND_URL}/users/${userId}/profile`);
+  const profile = response.json();
+  return profile;
+};
+
 export const getMessage = async () => {
   const response = await fetch(BACKEND_URL);
 
