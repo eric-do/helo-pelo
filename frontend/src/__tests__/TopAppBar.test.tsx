@@ -29,7 +29,7 @@ const tags: Tag[] = [
   },
   {
     name: 'DoesNotStartWithTe',
-    tag_count: 543,
+    tag_count: 1,
   },
 ];
 
@@ -150,7 +150,7 @@ it('should accept input in the search field', async () => {
   expect(input.value).toBe('te');
 });
 
-it('should dynamically render matched tags as user types', async () => {
+it('should dynamically render matched tags while typing', async () => {
   const appBar = render(
     <Router>
       <TopAppBar isOpen toggleDrawer={toggleDrawer} />
@@ -165,8 +165,12 @@ it('should dynamically render matched tags as user types', async () => {
   await waitFor(() => screen.getAllByText(`rides`, { exact: false }));
 
   tags.forEach((tag) => {
-    expect(appBar.getByText(tag.name)).toBeInTheDocument();
-    expect(appBar.getByText(`${tag.tag_count} rides`)).toBeInTheDocument();
+    expect(appBar.getByText(`#${tag.name}`)).toBeInTheDocument();
+    if (tag.tag_count > 1) {
+      expect(appBar.getByText(`${tag.tag_count} rides`)).toBeInTheDocument();
+    } else {
+      expect(appBar.getByText(`${tag.tag_count} ride`)).toBeInTheDocument();
+    }
   });
 });
 
