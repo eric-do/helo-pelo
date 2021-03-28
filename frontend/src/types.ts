@@ -12,7 +12,7 @@ export type UserProfile = {
   location: string;
   avatar: string;
   bio: string;
-}
+};
 
 export type Comment = {
   id: number;
