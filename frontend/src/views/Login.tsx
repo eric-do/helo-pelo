@@ -39,7 +39,8 @@ export const Login: FC = () => {
   const [error, setError] = useState<string>('');
   const { updateAuthentication } = useContext(SessionContext);
 
-  const handleSubmit = async (_: React.MouseEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
     setError('');
     try {
       const data = await login(email, password);
@@ -64,90 +65,92 @@ export const Login: FC = () => {
   ) : (
     <Paper className={classes.padding}>
       <div className={classes.margin}>
-        <Grid container spacing={8} alignItems="flex-end">
-          <Grid item>
-            <Face />
-          </Grid>
-          <Grid item md sm xs>
-            <TextField
-              id="email"
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.currentTarget.value)
-              }
-              fullWidth
-              autoFocus
-              required
-            />
-          </Grid>
-        </Grid>
-        <Grid container spacing={8} alignItems="flex-end">
-          <Grid item>
-            <Fingerprint />
-          </Grid>
-          <Grid item md sm xs>
-            <TextField
-              id="password"
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.currentTarget.value)
-              }
-              fullWidth
-              required
-            />
-          </Grid>
-        </Grid>
-        <br />
-        <Grid container alignItems="center">
-          {error && (
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={8} alignItems="flex-end">
             <Grid item>
-              <Alert severity="error">{error}</Alert>
+              <Face />
             </Grid>
-          )}
-        </Grid>
-        <Grid container alignItems="center" justify="space-between">
-          <Grid item>
-            <FormControlLabel
-              control={<Checkbox color="primary" />}
-              label="Remember me"
-            />
+            <Grid item md sm xs>
+              <TextField
+                id="email"
+                label="Email"
+                type="email"
+                value={email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.currentTarget.value)
+                }
+                fullWidth
+                autoFocus
+                required
+              />
+            </Grid>
           </Grid>
-          <Grid item>
+          <Grid container spacing={8} alignItems="flex-end">
+            <Grid item>
+              <Fingerprint />
+            </Grid>
+            <Grid item md sm xs>
+              <TextField
+                id="password"
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword(e.currentTarget.value)
+                }
+                fullWidth
+                required
+              />
+            </Grid>
+          </Grid>
+          <br />
+          <Grid container alignItems="center">
+            {error && (
+              <Grid item>
+                <Alert severity="error">{error}</Alert>
+              </Grid>
+            )}
+          </Grid>
+          <Grid container alignItems="center" justify="space-between">
+            <Grid item>
+              <FormControlLabel
+                control={<Checkbox color="primary" />}
+                label="Remember me"
+              />
+            </Grid>
+            <Grid item>
+              <Button
+                disableFocusRipple
+                disableRipple
+                className={classes.button}
+                variant="text"
+                color="primary"
+              >
+                Forgot password ?
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container justify="center" className={classes.marginTop}>
+            {' '}
             <Button
-              disableFocusRipple
-              disableRipple
-              className={classes.button}
-              variant="text"
+              variant="outlined"
               color="primary"
+              className={classes.button}
+              onClick={() => history.push('/signup')}
             >
-              Forgot password ?
+              Sign Up
+            </Button>{' '}
+            &nbsp;
+            <Button
+              type="submit"
+              variant="outlined"
+              color="primary"
+              className={classes.button}
+            >
+              Login
             </Button>
           </Grid>
-        </Grid>
-        <Grid container justify="center" className={classes.marginTop}>
-          {' '}
-          <Button
-            variant="outlined"
-            color="primary"
-            className={classes.button}
-            onClick={() => history.push('/signup')}
-          >
-            Sign Up
-          </Button>{' '}
-          &nbsp;
-          <Button
-            variant="outlined"
-            color="primary"
-            className={classes.button}
-            onClick={handleSubmit}
-          >
-            Login
-          </Button>
-        </Grid>
+        </form>
       </div>
     </Paper>
   );
