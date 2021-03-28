@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Home, Login, SignUp, Protected, PrivateRoute } from './views';
 import { Admin } from './admin';
 import { logout } from './utils/auth';
+import Profile from './views/Profile';
 import RideList from './views/rides/RideList';
 import Navigation from './navigation/Navigation';
 import { SessionContext } from './providers/SessionProvider';
@@ -52,7 +53,8 @@ const Routes: FC = () => {
           />
           <PrivateRoute path="/protected" component={Protected} />
           <PrivateRoute path="/rides" component={RideList} />
-          <PrivateRoute path="/" component={Home} />
+          <PrivateRoute path="/profile" component={Profile} />
+          <PrivateRoute exact path="/" component={Home} />
         </header>
       </div>
     </Switch>

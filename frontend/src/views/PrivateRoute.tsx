@@ -6,6 +6,7 @@ import { isAuthenticated } from '../utils/auth';
 type PrivateRouteType = {
   component: React.ComponentType<any>;
   path?: string | string[];
+  exact?: boolean;
 };
 
 export const PrivateRoute: FC<PrivateRouteType> = ({
