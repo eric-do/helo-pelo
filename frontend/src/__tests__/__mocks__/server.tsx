@@ -1,10 +1,10 @@
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { BACKEND_URL, BASE_URL } from '../../config';
+import { BACKEND_URL } from '../../config';
 import { user, userProfile, rides, comments, tags } from './data';
 
 export const server = setupServer(
-  rest.post(`${BASE_URL}/api/token`, (req, res, ctx) => {
+  rest.post(`/api/token`, (req, res, ctx) => {
     return res(ctx.json({ message: 'Successful login' }));
   }),
 
