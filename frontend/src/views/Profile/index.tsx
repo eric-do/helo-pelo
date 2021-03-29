@@ -54,7 +54,6 @@ const Profile = () => {
     (async () => {
       const user = await getCurrentUser();
       const profile = await getUserProfile(user.id);
-      console.log(profile);
       setUser(user);
       setProfile(profile);
     })();
