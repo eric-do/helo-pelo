@@ -8,7 +8,6 @@ import { rest } from 'msw';
 import { server, comments, tags, ride as validRide } from './__mocks__';
 import RideCard from '../views/rides/RideCard';
 import { getLocalStringFromTimeStamp } from '../utils';
-import { Ride, Tag, Comment } from '../types';
 import { BACKEND_URL } from '../config';
 
 beforeAll(() => server.listen());
@@ -78,7 +77,7 @@ it('should accept input in the comment field', async () => {
   expect(input.value).toBe(comment.comment);
 });
 
-xit('should update comments after submitting a comment', async () => {
+it('should update comments after submitting a comment', async () => {
   const comment = {
     comment: 'newly added comment',
     id: 44,
@@ -96,19 +95,21 @@ xit('should update comments after submitting a comment', async () => {
   const input = ride.getByPlaceholderText('Add tag(s)') as HTMLInputElement;
 
   server.use(
+    rest.post(`${BACKEND_URL}/rides/10/comments`, (req, res, ctx) => {
+      return res.once(ctx.status(201));
+    }),
+
     rest.get(`${BACKEND_URL}/rides/10/comments`, (req, res, ctx) => {
       return res.once(ctx.json([comment]));
     })
   );
 
   fireEvent.change(input, { target: { value: comment.comment } });
-  fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+  fireEvent.submit(input);
 
   await waitFor(() =>
     expect(screen.getByText(/newly added comment/)).toBeInTheDocument()
   );
   expect(screen.getByText(/newly added comment/)).toBeInTheDocument();
-
-  await waitFor(() => expect(input.value).toBe(''));
   expect(input.value).toBe('');
 });
