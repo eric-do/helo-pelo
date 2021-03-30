@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Divider,
   Drawer,
@@ -7,14 +7,20 @@ import {
   ListItemIcon,
   ListItemText,
   Hidden,
+  Typography,
 } from '@material-ui/core';
-import { Inbox } from '@material-ui/icons';
+import { Inbox, Person, DirectionsBike } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
 import {
   makeStyles,
   useTheme,
   Theme,
   createStyles,
+  styled,
 } from '@material-ui/core/styles';
+import { RideOptionsContext } from '../providers/RidesProvider';
+import { getTags } from '../utils/api';
+import type { Tag } from '../types';
 
 const drawerWidth = 240;
 
@@ -53,6 +59,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const NavLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.text.primary,
+  textDecoration: 'none',
+}));
+
 type DrawerProps = {
   open: boolean;
   toggleDrawer: (
@@ -60,33 +71,69 @@ type DrawerProps = {
   ) => (event: React.KeyboardEvent | React.MouseEvent) => void;
 };
 
+const routes = [
+  {
+    name: 'Profile',
+    path: '/profile',
+    icon: <Person />,
+  },
+  {
+    name: 'RideFeed',
+    path: '/rides',
+    icon: <DirectionsBike />,
+  },
+];
+
 const ResponsiveDrawer = ({ open, toggleDrawer }: DrawerProps) => {
   const classes = useStyles();
   const theme = useTheme();
+  const [tags, setTags] = useState<Tag[]>([]);
+  const { setOptions } = useContext(RideOptionsContext);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const tagList = await getTags();
+      if (mounted) {
+        setTags(tagList);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const drawer = (
     <div>
       <div className={classes.toolbar} />
       <Divider />
       <List>
-        {['Tagged Rides', 'Email', 'Test'].map((text) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              <Inbox />
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
+        {routes.map((route) => (
+          <NavLink to={route.path} key={route.name}>
+            <ListItem button onClick={() => setOptions({ tag: '' })}>
+              <ListItemIcon>{route.icon}</ListItemIcon>
+              <ListItemText primary={route.name} />
+            </ListItem>
+          </NavLink>
         ))}
       </List>
       <Divider />
       <List>
-        {['Tagged Rides', 'Email', 'Test'].map((text) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              <Inbox />
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
+        <ListItem key="trending">
+          <ListItemText primary="Trending Tags" />
+        </ListItem>
+        {tags.map((tag) => (
+          <NavLink to="/rides" key={tag.name}>
+            <ListItem button onClick={() => setOptions({ tag: tag.name })}>
+              <ListItemText
+                primary={`#${tag.name}`}
+                secondary={`${tag.tag_count} ${
+                  tag.tag_count > 1 ? 'rides' : 'ride'
+                }`}
+              />
+            </ListItem>
+          </NavLink>
         ))}
       </List>
     </div>

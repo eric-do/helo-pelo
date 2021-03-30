@@ -76,9 +76,11 @@ const AutoCompleteSearch = () => {
       renderOption={(option, { selected }) => (
         <>
           <div>
-            <span>{option.name}</span>
+            <span>{`#${option.name}`}</span>
             <br />
-            <span>{`${option.tag_count} rides`}</span>
+            <span>{`${option.tag_count} ${
+              option.tag_count > 1 ? 'rides' : 'ride'
+            }`}</span>
           </div>
         </>
       )}

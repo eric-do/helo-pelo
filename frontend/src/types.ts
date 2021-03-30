@@ -6,6 +6,14 @@ export type User = {
   is_superuser: boolean;
 };
 
+export type UserProfile = {
+  reddit_handle: string;
+  peloton_handle: string;
+  location: string;
+  avatar: string;
+  bio: string;
+};
+
 export type Comment = {
   id: number;
   comment: string;

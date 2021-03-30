@@ -37,7 +37,6 @@ type RideCardProps = {
   ride: Ride;
 };
 
-const primaryFontColor = 'white';
 const primaryBrandColor = blue[200];
 const secondaryBrandColor = red[200];
 
@@ -64,16 +63,16 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center',
       fontWeight: 600,
       fontSize: 15,
-      color: primaryFontColor,
+      color: theme.palette.text.primary,
     },
     cardSubheader: {
       textAlign: 'center',
-      color: primaryFontColor,
+      color: theme.palette.text.primary,
       fontSize: 12,
     },
     cardContent: {
       textAlign: 'left',
-      color: primaryFontColor,
+      color: theme.palette.text.primary,
       marginBottom: 10,
     },
     iconButton: {
@@ -83,12 +82,12 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     icon: {
-      color: primaryFontColor,
+      color: theme.palette.text.primary,
     },
     tagForm: {
       width: '100%',
       '& label.Mui-unfocused': {
-        color: primaryFontColor,
+        color: theme.palette.text.primary,
       },
       '& label.Mui-focused': {
         color: primaryBrandColor,
@@ -98,7 +97,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     formInput: {
-      color: primaryFontColor,
+      color: theme.palette.text.primary,
     },
     tagContinaer: {
       display: 'flex',
@@ -128,13 +127,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     commentUser: {
       fontWeight: 600,
-      color: primaryFontColor,
+      color: theme.palette.text.primary,
     },
     commentText: {
-      color: primaryFontColor,
+      color: theme.palette.text.primary,
     },
     commentListFooter: {
-      color: primaryFontColor,
+      color: theme.palette.text.primary,
       display: 'flex',
       justifyContent: 'center',
       fontSize: 14,
@@ -202,14 +201,22 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const airDate = getLocalStringFromTimeStamp(ride.original_air_time);
 
   useEffect(() => {
+    let mounted = true;
+
     (async () => {
       const commentsFromAPI = await getRideComments(ride.id);
       const tagsFromAPI = await getRideTags(ride.id);
 
-      setComments(commentsFromAPI);
-      setCommentCount(Math.min(commentsFromAPI.length, 2));
-      setTags(tagsFromAPI);
+      if (mounted) {
+        setComments(commentsFromAPI);
+        setCommentCount(Math.min(commentsFromAPI.length, 2));
+        setTags(tagsFromAPI);
+      }
     })();
+
+    return () => {
+      mounted = false;
+    };
   }, [ride]);
 
   return (
