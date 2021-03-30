@@ -51,8 +51,18 @@ export const getRides = async (options: RideOptions = {}) => {
   );
 
   const response = await fetch(url.toString());
-  const rides = await response.json();
-  return rides;
+
+  if (response.status === 500) {
+    throw new Error('Internal server error');
+  }
+
+  const data = await response.json();
+
+  if (response.status >= 400 && response.status < 500) {
+    throw data.detail || data;
+  }
+
+  return data;
 };
 
 export const getRideComments = async (rideId: number) => {
