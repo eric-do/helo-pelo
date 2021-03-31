@@ -2,7 +2,13 @@
  * @jest-environment jsdom
  */
 import React from 'react';
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  waitFor,
+  screen,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { rest } from 'msw';
 import { server, rides } from './__mocks__';
@@ -24,7 +30,12 @@ describe('<RideList />', () => {
     });
   });
 
-  it('should render a spinner while rides are loading', async () => {});
+  it('should render a spinner while rides are loading', async () => {
+    const rideList = render(<RideList />);
+    expect(rideList.getByRole('progressbar')).toBeInTheDocument();
+    await waitForElementToBeRemoved(() => rideList.getByRole('progressbar'));
+    expect(rideList.queryByRole('progressbar')).not.toBeInTheDocument();
+  });
 
   it('should render an error message if request fails', async () => {
     const error = { detail: 'Network request failed' };
