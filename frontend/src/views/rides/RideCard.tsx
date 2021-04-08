@@ -32,6 +32,7 @@ import {
 } from '../../utils/api';
 import { logout } from '../../utils/auth';
 import { SessionContext } from '../../providers/SessionProvider';
+import { RideOptionsContext } from '../../providers/RidesProvider';
 
 type RideCardProps = {
   ride: Ride;
@@ -171,6 +172,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const [ride, setRide] = useState<Ride>(rideProp);
   const [authError, setAuthError] = useState<Error | null>(null);
   const { updateAuthentication } = useContext(SessionContext);
+  const { setOptions } = useContext(RideOptionsContext);
 
   const clearPlaceholder = () => setPlaceholder('');
   const resetPlaceholder = () => setPlaceholder(initialPlaceholder);
@@ -208,7 +210,6 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
     (async () => {
       const commentsFromAPI = await getRideComments(ride.id);
       const tagsFromAPI = await getRideTags(ride.id);
-
       if (mounted) {
         setComments(commentsFromAPI);
         setCommentCount(Math.min(commentsFromAPI.length, 2));
@@ -262,6 +263,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
                   <Chip
                     className={classes.currentTag}
                     label={`#${tag.name}`}
+                    onClick={() => setOptions({ tag: tag.name })}
                     clickable
                   />
                 </Badge>
