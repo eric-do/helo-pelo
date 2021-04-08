@@ -16,11 +16,11 @@ export const server = setupServer(
     return res(ctx.json(userProfile));
   }),
 
-  rest.get(`${BACKEND_URL}/rides/10/comments`, (req, res, ctx) => {
+  rest.get(`${BACKEND_URL}/rides/:rideId/comments`, (req, res, ctx) => {
     return res(ctx.json(comments));
   }),
 
-  rest.get(`${BACKEND_URL}/rides/10/tags`, (req, res, ctx) => {
+  rest.get(`${BACKEND_URL}/rides/:rideId/tags`, (req, res, ctx) => {
     return res(ctx.json(tags));
   }),
 
@@ -32,7 +32,7 @@ export const server = setupServer(
     return res(ctx.json(rides));
   }),
 
-  rest.get(`${BACKEND_URL}/rides/10`, (req, res, ctx) => {
+  rest.get(`${BACKEND_URL}/rides/:rideId`, (req, res, ctx) => {
     return res(ctx.json(rides[0]));
   })
 );
