@@ -51,4 +51,34 @@ describe('<RideList />', () => {
       expect(rideList.getByText(error.detail)).toBeInTheDocument()
     );
   });
+
+  it('should render error modal if request fails due to auth', async () => {
+    // Get valid rides list
+    // Attempt comment submission to a ride and get a 401
+    // Confirm modal displays
+    const rideList = render(<RideList />);
+    const status = 401;
+    const error = { detail: 'Authentication failed' };
+
+    server.use(
+      rest.post(`${BACKEND_URL}/rides/:rideId/comments`, (req, res, ctx) => {
+        return res.once(ctx.status(status), ctx.json(error));
+      })
+    );
+
+    await waitFor(() =>
+      expect(rideList.getByText(rides[0].title)).toBeInTheDocument()
+    );
+
+    const input = rideList.getByPlaceholderText(
+      'Add tag(s)'
+    ) as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: 'test comment' } });
+    fireEvent.submit(input);
+
+    await waitFor(() =>
+      expect(screen.getByText('You have been logged out')).toBeInTheDocument()
+    );
+  });
 });

@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Paper, Box, CircularProgress } from '@material-ui/core';
+import { Paper, Box, CircularProgress, Modal } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { getRides } from '../../utils/api';
 import type { Comment, Tag, Ride } from '../../types';

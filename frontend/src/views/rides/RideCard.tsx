@@ -169,7 +169,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const [comment, setComment] = useState<string>('');
   const [commentCount, setCommentCount] = useState<number>(0);
   const [ride, setRide] = useState<Ride>(rideProp);
-  const [error, setError] = useState<Error | null>(null);
+  const [authError, setAuthError] = useState<Error | null>(null);
   const { updateAuthentication } = useContext(SessionContext);
 
   const clearPlaceholder = () => setPlaceholder('');
@@ -188,9 +188,11 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
       setRide(updatedRide);
       clearComment();
     } catch (err) {
-      if (err.response.status === 401) {
+      console.log(err);
+      if (err.status === 401) {
         updateAuthentication();
         logout();
+        setAuthError(err);
       }
     }
   };

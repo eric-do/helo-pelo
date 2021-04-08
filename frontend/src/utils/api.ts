@@ -2,6 +2,15 @@ import axios from 'axios';
 import { BACKEND_URL } from '../config';
 import type { Ride, RideOptions } from '../types';
 
+class RequestError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
 export const debounce = <T extends Function>(cb: T, wait = 250) => {
   let h: number = 0;
   const callable = (...args: any) => {
@@ -84,15 +93,31 @@ export const getRide = async (rideId: number) => {
 };
 
 export const addComment = async (rideId: number, comment: string) => {
+  type PostResponse = {
+    detail: string;
+  };
+
   const token = localStorage.getItem('token');
+  const data = { comment };
+
   const config = {
+    method: 'POST',
+    body: JSON.stringify(data),
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  const data = { comment };
-  await axios.post(`${BACKEND_URL}/rides/${rideId}/comments`, data, config);
+  const response = await fetch(
+    `${BACKEND_URL}/rides/${rideId}/comments`,
+    config
+  );
+
+  if (!response.ok) {
+    throw new RequestError(response.statusText, response.status);
+  }
+
+  return response;
 };
 
 export const getTags = async (query: string = '') => {
