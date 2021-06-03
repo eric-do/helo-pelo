@@ -61,6 +61,20 @@ export const rides: Ride[] = [
     original_air_time: '2021-02-16T22:29:00',
     scheduled_start_time: '2021-02-16T22:35:00',
   },
+  {
+    id: 12,
+    description: 'The second ride from hell. Get on this and never get off.',
+    ride_id: '3863ad9c30a4w5gw45h35b3c2be1aea766fff',
+    difficulty_estimate: 7.7485,
+    duration: 1800,
+    fitness_discipline_display_name: 'Bike Bootcamp',
+    image_url:
+      'https://s3.amazonaws.com/peloton-ride-images/dda7988466b2257d89928788fd9711dc08ed95ba/img_1613524141_d4b7d06e1c6044b09af859abff8f21fd.png',
+    instructor_id: '1b79e462bd564b6ca5ec728f1a5c2af0',
+    title: '60 min of hell',
+    original_air_time: '2021-02-16T22:29:00',
+    scheduled_start_time: '2021-02-16T22:35:00',
+  },
 ];
 
 export const comments: Comment[] = [

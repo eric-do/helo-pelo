@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Paper } from '@material-ui/core';
+import { Paper, Box, CircularProgress, Modal } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { getRides } from '../../utils/api';
 import type { Comment, Tag, Ride } from '../../types';
@@ -26,26 +26,34 @@ const useStyles = makeStyles((theme: Theme) =>
 const RideList: FC = () => {
   const [rides, setRides] = useState<Ride[]>([]);
   const [error, setError] = useState<string>('');
+  const [isPending, setPending] = useState<boolean>(false);
   const classes = useStyles();
   const { isAuthenticated } = useContext(SessionContext);
   const { options, setOptions } = useContext(RideOptionsContext);
 
   useEffect(() => {
+    setPending(true);
     (async () => {
       try {
         const data = await getRides(options);
+        setPending(false);
         setRides(data);
       } catch (e) {
-        console.log(e);
         setError(e);
       }
     })();
   }, [options]);
 
   return (
-    <div className={classes.cardList}>
-      {rides && rides.map((ride) => <RideCard ride={ride} key={ride.id} />)}
-    </div>
+    <>
+      {error && <Box>{error}</Box>}
+      {isPending && <CircularProgress />}
+      {!error && !isPending && (
+        <div className={classes.cardList}>
+          {rides && rides.map((ride) => <RideCard ride={ride} key={ride.id} />)}
+        </div>
+      )}
+    </>
   );
 };
 

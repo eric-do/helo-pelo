@@ -1,13 +1,10 @@
 import React, { FC, useState, useContext, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import {
   Card,
   CardHeader,
   CardMedia,
   CardContent,
-  CardActions,
-  Collapse,
   Avatar,
   IconButton,
   Typography,
@@ -15,10 +12,6 @@ import {
   Chip,
   Badge,
   Box,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
 } from '@material-ui/core';
 import { MoreVert } from '@material-ui/icons';
 import { red, purple, blue } from '@material-ui/core/colors';
@@ -32,6 +25,8 @@ import {
 } from '../../utils/api';
 import { logout } from '../../utils/auth';
 import { SessionContext } from '../../providers/SessionProvider';
+import { RideOptionsContext } from '../../providers/RidesProvider';
+import RideComments from './RideComments';
 
 type RideCardProps = {
   ride: Ride;
@@ -121,43 +116,8 @@ const useStyles = makeStyles((theme: Theme) =>
     addTag: {
       marginLeft: 5,
     },
-    commentList: {
-      width: '97%',
-      backgroundColor: 'rgba(255,255,255,0.05)',
-    },
-    commentUser: {
-      fontWeight: 600,
-      color: theme.palette.text.primary,
-    },
-    commentText: {
-      color: theme.palette.text.primary,
-    },
-    commentListFooter: {
-      color: theme.palette.text.primary,
-      display: 'flex',
-      justifyContent: 'center',
-      fontSize: 14,
-      marginTop: 5,
-      cursor: 'pointer',
-    },
   })
 );
-
-const useInput = (initialState: string = '') => {
-  const [state, setState] = useState(initialState);
-
-  const handlers = React.useMemo(
-    () => ({
-      handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-        setState(e.target.value);
-      },
-      resetInput: () => setState(initialState),
-    }),
-    [initialState]
-  );
-
-  return [state, handlers];
-};
 
 const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const initialCommentCount = 2;
@@ -169,8 +129,9 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
   const [comment, setComment] = useState<string>('');
   const [commentCount, setCommentCount] = useState<number>(0);
   const [ride, setRide] = useState<Ride>(rideProp);
-  const [error, setError] = useState<Error | null>(null);
+  const [authError, setAuthError] = useState<Error | null>(null);
   const { updateAuthentication } = useContext(SessionContext);
+  const { setOptions } = useContext(RideOptionsContext);
 
   const clearPlaceholder = () => setPlaceholder('');
   const resetPlaceholder = () => setPlaceholder(initialPlaceholder);
@@ -188,15 +149,14 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
       setRide(updatedRide);
       clearComment();
     } catch (err) {
-      if (err.response.status === 401) {
+      console.log(err);
+      if (err.status === 401) {
         updateAuthentication();
         logout();
+        setAuthError(err);
       }
     }
   };
-
-  const loadMoreComments = () => setCommentCount(commentCount + 5);
-  const resetComments = () => setCommentCount(initialCommentCount);
 
   const airDate = getLocalStringFromTimeStamp(ride.original_air_time);
 
@@ -206,7 +166,6 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
     (async () => {
       const commentsFromAPI = await getRideComments(ride.id);
       const tagsFromAPI = await getRideTags(ride.id);
-
       if (mounted) {
         setComments(commentsFromAPI);
         setCommentCount(Math.min(commentsFromAPI.length, 2));
@@ -260,6 +219,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
                   <Chip
                     className={classes.currentTag}
                     label={`#${tag.name}`}
+                    onClick={() => setOptions({ tag: tag.name })}
                     clickable
                   />
                 </Badge>
@@ -287,44 +247,7 @@ const RideCard = ({ ride: rideProp }: RideCardProps) => {
           </form>
         </CardContent>
       </Card>
-      {comments.length > 0 && (
-        <List className={classes.commentList}>
-          {comments.slice(0, commentCount).map((comment, i) => (
-            <div key={comment.id}>
-              <ListItem>
-                <ListItemText
-                  primary={
-                    <Typography className={classes.commentUser}>
-                      {comment.user.username}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography className={classes.commentText}>
-                      {comment.comment}
-                    </Typography>
-                  }
-                  onClick={() => console.log('hi')}
-                />
-              </ListItem>
-              <Divider component="li" />
-            </div>
-          ))}
-          {commentCount < comments.length && (
-            <Box
-              className={classes.commentListFooter}
-              onClick={loadMoreComments}
-            >
-              <span>See more comments</span>
-            </Box>
-          )}
-          {commentCount >= comments.length &&
-            commentCount > initialCommentCount && (
-              <Box className={classes.commentListFooter}>
-                <span onClick={resetComments}>Hide comments</span>
-              </Box>
-            )}
-        </List>
-      )}
+      {comments.length > 0 && <RideComments comments={comments} />}
     </Box>
   );
 };
